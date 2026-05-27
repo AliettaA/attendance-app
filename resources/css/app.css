@@ -1,0 +1,84 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    body {
+        @apply min-h-screen bg-gray-100 text-gray-800;
+    }
+}
+
+@layer components {
+    .auth-page {
+        @apply flex min-h-[calc(100vh-72px)] items-center justify-center px-6 py-12;
+    }
+
+    .auth-panel {
+        width: 680px;
+        max-width: 100%;
+    }
+
+    .auth-title {
+        @apply text-center text-3xl font-bold text-gray-900;
+    }
+
+    .auth-error-box {
+        @apply mb-6 min-h-16 rounded border border-red-200 bg-red-50 px-4 py-3 text-sm font-semibold text-red-700;
+    }
+
+    .auth-error-space {
+        @apply mb-4 min-h-16;
+    }
+
+    .form-group {
+        @apply mb-6;
+    }
+
+    .form-label {
+        @apply mb-2 block text-sm font-semibold text-gray-700;
+    }
+
+    .form-input {
+        width: 100%;
+        height: 45px;
+        @apply rounded border border-gray-300 bg-white px-4 text-base text-gray-900 outline-none focus:border-gray-500 focus:ring-1 focus:ring-gray-500;
+    }
+
+   .auth-submit {
+       width: 100%;
+       height: 45px;
+       @apply mt-2 rounded bg-black font-semibold text-white;
+   }
+
+    .auth-link {
+        @apply mt-6 block text-center text-sm font-semibold text-blue-600 hover:text-blue-800;
+    }
+
+    .attendance-register-page {
+        @apply flex min-h-screen items-center justify-center bg-gray-100 px-6 py-10 text-center text-gray-800;
+    }
+
+    .attendance-register-panel {
+        @apply mx-auto flex w-full max-w-xl flex-col items-center justify-center;
+    }
+
+    .attendance-current-time {
+        @apply mb-20 text-9xl font-bold tracking-normal text-gray-900;
+    }
+
+    .btn-primary {
+        @apply mx-8 rounded bg-black px-6 py-2 font-semibold text-white;
+    }
+
+    .btn-primary-white {
+        @apply mx-8 rounded bg-white px-6 py-2 font-semibold text-black;
+    }
+
+    .btn-primary:disabled {
+        @apply bg-gray-400;
+    }
+
+    .btn-secondary {
+        @apply rounded bg-gray-700 px-4 py-2 text-sm font-semibold text-white;
+    }
+}
