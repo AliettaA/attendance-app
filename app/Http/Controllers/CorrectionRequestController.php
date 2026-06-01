@@ -15,11 +15,14 @@ class CorrectionRequestController extends Controller
             $status = 'pending';
         }
 
-        $correctionRequests = CorrectionRequest::where('user_id', $request->user()->id)
-            ->where('status', $status)
-            ->with(['user', 'attendance'])
-            ->latest()
-            ->get();
+        $query = CorrectionRequest::where('status', $status)
+            ->with(['user', 'attendance']);
+
+        if ($request->user()->role !== 'admin') {
+            $query->where('user_id', $request->user()->id);
+        }
+
+        $correctionRequests = $query->latest()->get();
 
         return view('correction_requests.index', compact('correctionRequests', 'status'));
     }

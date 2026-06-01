@@ -85,11 +85,14 @@ class AttendanceController extends Controller
     public function show(Request $request, $id)
     {
         $attendance = Attendance::where('user_id', $request->user()->id)
-            ->with(['breakTimes', 'correctionRequests'])
+            ->with(['user', 'breakTimes', 'correctionRequests.correctionRequestBreaks'])
             ->findOrFail($id);
-        $pendingCorrectionRequest = $attendance->correctionRequests()
+
+        $pendingCorrectionRequest = $attendance->correctionRequests
             ->where('status', 'pending')
-            ->exists();
+            ->sortByDesc('created_at')
+            ->first();
+
         return view('attendance.detail', compact('attendance', 'pendingCorrectionRequest'));
     }
     public function storeCorrectionRequest(AttendanceCorrectionRequest $request, $id)
@@ -128,6 +131,7 @@ class AttendanceController extends Controller
                     : null,
             ]);
         }
-        return redirect("/attendance/detail/{$attendance->id}");
+        return redirect("/attendance/detail/{$attendance->id}")
+            ->with('status', '修正申請を送信しました。');
     }
 }

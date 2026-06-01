@@ -17,12 +17,17 @@
 
             @auth
                 @if (auth()->user()->role === 'admin')
-                    <form method="POST" action="/logout">
-                        @csrf
-                        <button type="submit" class="text-sm font-semibold text-black hover:text-black">
-                            ログアウト
-                        </button>
-                    </form>
+                    <nav class="flex items-center gap-8 text-sm font-semibold text-white">
+                        <a href="/admin/attendance/list" class="hover:text-gray-500">勤怠一覧</a>
+                        <a href="/admin/staff/list" class="hover:text-gray-500">スタッフ一覧</a>
+                        <a href="/stamp_correction_request/list" class="hover:text-gray-500">申請一覧</a>
+                        <form method="POST" action="/logout">
+                            @csrf
+                            <button type="submit" class="font-semibold hover:text-gray-500">
+                                ログアウト
+                            </button>
+                        </form>
+                    </nav>
                 @else
                     <nav class="flex items-center gap-8 text-sm font-semibold text-white">
                         <a href="/attendance" class="hover:text-gray-500">勤怠</a>

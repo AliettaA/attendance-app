@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', '勤怠詳細')
+@section('title', '管理者 勤怠詳細')
 
 @section('content')
     <main class="page-container">
@@ -22,7 +22,7 @@
             </div>
         @endif
 
-        <form method="POST" action="/attendance/detail/{{ $attendance->id }}">
+        <form method="POST" action="/admin/attendance/{{ $attendance->id }}">
             @csrf
 
             <div class="detail-panel">
@@ -43,35 +43,26 @@
                     </div>
                 </div>
 
-                @php
-                    $displayClockInAt = $pendingCorrectionRequest?->requested_clock_in_at ?? $attendance->clock_in_at;
-                    $displayClockOutAt = $pendingCorrectionRequest?->requested_clock_out_at ?? $attendance->clock_out_at;
-                @endphp
-
                 <div class="detail-row">
                     <div class="detail-label">出勤・退勤</div>
                     <div class="detail-input-row">
                         <input type="time" name="clock_in_at"
-                            value="{{ old('clock_in_at', $displayClockInAt ? \Carbon\Carbon::parse($displayClockInAt)->format('H:i') : '') }}"
+                            value="{{ old('clock_in_at', $attendance->clock_in_at ? \Carbon\Carbon::parse($attendance->clock_in_at)->format('H:i') : '') }}"
                             class="time-input" @disabled($pendingCorrectionRequest)>
                         <span>〜</span>
                         <input type="time" name="clock_out_at"
-                            value="{{ old('clock_out_at', $displayClockOutAt ? \Carbon\Carbon::parse($displayClockOutAt)->format('H:i') : '') }}"
+                            value="{{ old('clock_out_at', $attendance->clock_out_at ? \Carbon\Carbon::parse($attendance->clock_out_at)->format('H:i') : '') }}"
                             class="time-input" @disabled($pendingCorrectionRequest)>
                     </div>
                 </div>
 
                 @php
                     $breakRows = $attendance->breakTimes->values();
-                    $pendingBreakRows = $pendingCorrectionRequest?->correctionRequestBreaks?->values() ?? collect();
                 @endphp
 
                 @for ($index = 0; $index < 2; $index++)
                     @php
                         $breakTime = $breakRows->get($index);
-                        $pendingBreakTime = $pendingBreakRows->get($index);
-                        $displayBreakStartAt = $pendingBreakTime?->requested_break_start_at ?? $breakTime?->break_start_at;
-                        $displayBreakEndAt = $pendingBreakTime?->requested_break_end_at ?? $breakTime?->break_end_at;
                     @endphp
 
                     <div class="detail-row">
@@ -82,11 +73,11 @@
                             <input type="hidden" name="breaks[{{ $index }}][original_break_time_id]"
                                 value="{{ old('breaks.' . $index . '.original_break_time_id', $breakTime?->id) }}">
                             <input type="time" name="breaks[{{ $index }}][start]"
-                                value="{{ old('breaks.' . $index . '.start', $displayBreakStartAt ? \Carbon\Carbon::parse($displayBreakStartAt)->format('H:i') : '') }}"
+                                value="{{ old('breaks.' . $index . '.start', $breakTime?->break_start_at ? \Carbon\Carbon::parse($breakTime->break_start_at)->format('H:i') : '') }}"
                                 class="time-input" @disabled($pendingCorrectionRequest)>
                             <span>〜</span>
                             <input type="time" name="breaks[{{ $index }}][end]"
-                                value="{{ old('breaks.' . $index . '.end', $displayBreakEndAt ? \Carbon\Carbon::parse($displayBreakEndAt)->format('H:i') : '') }}"
+                                value="{{ old('breaks.' . $index . '.end', $breakTime?->break_end_at ? \Carbon\Carbon::parse($breakTime->break_end_at)->format('H:i') : '') }}"
                                 class="time-input" @disabled($pendingCorrectionRequest)>
                         </div>
                     </div>
@@ -96,7 +87,7 @@
                     <div class="detail-label">備考</div>
                     <div class="detail-value">
                         <textarea name="note" rows="4" class="w-full rounded border px-3 py-2 font-bold text-black"
-                            @disabled($pendingCorrectionRequest)>{{ old('note', $pendingCorrectionRequest?->requested_note ?? $attendance->note) }}</textarea>
+                            @disabled($pendingCorrectionRequest)>{{ old('note', $attendance->note) }}</textarea>
                     </div>
                 </div>
             </div>

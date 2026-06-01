@@ -18,6 +18,12 @@
         max-width: 100%;
     }
 
+    .page-container {
+        @apply mx-auto px-6 py-10;
+        width: 900px;
+        max-width: 100%;
+    }
+
     .auth-title {
         @apply text-center text-3xl font-bold text-gray-900;
     }
@@ -80,5 +86,75 @@
 
     .btn-secondary {
         @apply rounded bg-gray-700 px-4 py-2 text-sm font-semibold text-white;
+    }
+
+    .detail-label {
+        @apply bg-white px-4 py-4 font-normal text-gray-500;
+    }
+
+    .page-title {
+        @apply flex items-center gap-4 text-2xl font-bold text-black;
+    }
+
+    .page-title::before {
+        content: '';
+        @apply block w-1.5 rounded-sm bg-black;
+        height: 34px;
+    }
+
+    .table-panel {
+        @apply overflow-hidden bg-white shadow;
+        border-radius: 10px;
+    }
+
+    .data-table {
+        @apply w-full table-auto border-separate border-spacing-0 bg-white;
+    }
+
+    .data-table thead {
+        @apply bg-white;
+    }
+
+    .data-table th {
+        @apply border-b-[3px] border-gray-100 px-4 py-3 text-left font-bold text-gray-500;
+    }
+
+    .data-table td {
+        @apply border-b-2 border-gray-100 px-4 py-3;
+    }
+
+    .data-table tbody tr:last-child td {
+        @apply border-b-0;
+    }
+
+    .detail-panel {
+        @apply overflow-hidden bg-white shadow;
+        border-radius: 10px;
+    }
+
+    .detail-row {
+        @apply grid grid-cols-3 border-b-2 border-gray-100 bg-white;
+    }
+
+    .detail-row:last-child {
+        @apply border-b-0;
+    }
+
+    .detail-value {
+        @apply col-span-2 px-4 py-4 font-bold text-black;
+    }
+
+    .detail-input-row {
+        @apply col-span-2 flex items-center gap-4 px-4 py-4 font-bold text-black;
+    }
+
+    .time-input {
+        @apply w-28 rounded border px-3 py-2 font-bold text-black;
+        appearance: textfield;
+    }
+
+    .time-input::-webkit-calendar-picker-indicator {
+        display: none;
+        -webkit-appearance: none;
     }
 }

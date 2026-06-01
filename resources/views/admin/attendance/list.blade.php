@@ -1,15 +1,13 @@
 @extends('layouts.app')
 
-@section('title', '勤怠一覧')
+@section('title', '管理者 勤怠一覧')
 
 @section('content')
-<main class="page-container">
-        <h1 class="page-title mb-8">勤怠一覧</h1>
+    <main class="page-container">
+        <h1 class="page-title mb-8">{{ $date->format('Y年n月j日') }}の勤怠</h1>
 
         <div class="mb-6 flex items-center justify-between rounded bg-white px-6 py-4 shadow">
-            <a href="/attendance/list?month={{ $previousMonth }}" class="font-semibold text-gray-500 hover:text-gray-700">
-                ←前月
-            </a>
+            <a href="/admin/attendance/list?date={{ $previousDate }}" class="font-semibold text-gray-500 hover:text-gray-700">←前日</a>
 
             <p class="flex items-center gap-2 text-lg font-bold">
                 <svg class="h-6 w-6 text-gray-600" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -18,19 +16,17 @@
                     <path d="M8 2v4M16 2v4" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
                     <path d="M7 12h2M11 12h2M15 12h2M7 16h2M11 16h2M15 16h2" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
                 </svg>
-                {{ $month->format('Y年m月') }}
+                {{ $date->format('Y年m月d日') }}
             </p>
 
-            <a href="/attendance/list?month={{ $nextMonth }}" class="font-semibold text-gray-500 hover:text-gray-700">
-                翌月→
-            </a>
+            <a href="/admin/attendance/list?date={{ $nextDate }}" class="font-semibold text-gray-500 hover:text-gray-700">翌日→</a>
         </div>
 
         <div class="table-panel">
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th class="px-4 py-3 text-left">日付</th>
+                        <th class="px-4 py-3 text-left">名前</th>
                         <th class="px-4 py-3 text-left">出勤</th>
                         <th class="px-4 py-3 text-left">退勤</th>
                         <th class="px-4 py-3 text-left">休憩</th>
@@ -41,57 +37,35 @@
                 <tbody>
                     @forelse ($attendances as $attendance)
                         @php
-                            $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
-                            $workDate = \Carbon\Carbon::parse($attendance->work_date);
                             $breakMinutes = $attendance->breakTimes->sum(function ($breakTime) {
-                                if (is_null($breakTime->break_end_at)) {
+                                if (! $breakTime->break_start_at || ! $breakTime->break_end_at) {
                                     return 0;
                                 }
 
                                 return \Carbon\Carbon::parse($breakTime->break_start_at)
                                     ->diffInMinutes(\Carbon\Carbon::parse($breakTime->break_end_at));
                             });
-
                             $workMinutes = 0;
 
                             if ($attendance->clock_in_at && $attendance->clock_out_at) {
                                 $workMinutes = \Carbon\Carbon::parse($attendance->clock_in_at)
                                     ->diffInMinutes(\Carbon\Carbon::parse($attendance->clock_out_at)) - $breakMinutes;
                             }
-
-                            $breakHours = floor($breakMinutes / 60);
-                            $breakRemainderMinutes = $breakMinutes % 60;
-                            $workHours = floor($workMinutes / 60);
-                            $workRemainderMinutes = $workMinutes % 60;
                         @endphp
 
                         <tr>
+                            <td>{{ $attendance->user->name }}</td>
+                            <td>{{ $attendance->clock_in_at ? \Carbon\Carbon::parse($attendance->clock_in_at)->format('H:i') : '' }}</td>
+                            <td>{{ $attendance->clock_out_at ? \Carbon\Carbon::parse($attendance->clock_out_at)->format('H:i') : '' }}</td>
+                            <td>{{ sprintf('%d:%02d', intdiv($breakMinutes, 60), $breakMinutes % 60) }}</td>
+                            <td>{{ sprintf('%d:%02d', intdiv(max($workMinutes, 0), 60), max($workMinutes, 0) % 60) }}</td>
                             <td>
-                                {{ $workDate->format('m/d') }}（{{ $weekdays[$workDate->dayOfWeek] }}）
-                            </td>
-                            <td>
-                                {{ $attendance->clock_in_at ? \Carbon\Carbon::parse($attendance->clock_in_at)->format('H:i') : '' }}
-                            </td>
-                            <td>
-                                {{ $attendance->clock_out_at ? \Carbon\Carbon::parse($attendance->clock_out_at)->format('H:i') : '' }}
-                            </td>
-                            <td>
-                                {{ sprintf('%d:%02d', $breakHours, $breakRemainderMinutes) }}
-                            </td>
-                            <td>
-                                {{ sprintf('%d:%02d', $workHours, $workRemainderMinutes) }}
-                            </td>
-                            <td>
-                                <a href="/attendance/detail/{{ $attendance->id }}" class="font-bold text-black">
-                                    詳細
-                                </a>
+                                <a href="/admin/attendance/{{ $attendance->id }}" class="font-bold text-black">詳細</a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="text-center text-gray-500">
-                                勤怠データがありません。
-                            </td>
+                            <td colspan="6" class="text-center text-gray-500">勤怠データがありません。</td>
                         </tr>
                     @endforelse
                 </tbody>

@@ -3,8 +3,14 @@
 @section('title', '申請一覧')
 
 @section('content')
-    <div class="mx-auto max-w-6xl px-6 py-10">
-        <h1 class="mb-8 text-2xl font-bold text-gray-900">申請一覧</h1>
+    <div class="page-container">
+        <h1 class="page-title mb-8">申請一覧</h1>
+
+        @if (session('status'))
+            <div class="mb-6 rounded bg-green-100 px-4 py-3 text-green-800">
+                {{ session('status') }}
+            </div>
+        @endif
 
         <div class="mb-6 flex border-b border-gray-300">
             <a href="/stamp_correction_request/list?status=pending"
@@ -17,9 +23,9 @@
             </a>
         </div>
 
-        <div class="overflow-hidden rounded bg-white shadow-sm">
-            <table class="w-full table-auto border-collapse">
-                <thead class="bg-gray-100 text-sm text-gray-700">
+        <div class="table-panel">
+            <table class="data-table">
+                <thead class="text-sm">
                     <tr>
                         <th class="px-4 py-3 text-left">状態</th>
                         <th class="px-4 py-3 text-left">名前</th>
@@ -31,25 +37,25 @@
                 </thead>
                 <tbody>
                     @forelse ($correctionRequests as $correctionRequest)
-                        <tr class="border-t text-sm">
-                            <td class="px-4 py-4">
+                        <tr class="text-sm">
+                            <td>
                                 {{ $correctionRequest->status === 'pending' ? '承認待ち' : '承認済み' }}
                             </td>
-                            <td class="px-4 py-4">{{ $correctionRequest->user->name }}</td>
-                            <td class="px-4 py-4">
+                            <td>{{ $correctionRequest->user->name }}</td>
+                            <td>
                                 {{ \Carbon\Carbon::parse($correctionRequest->attendance->work_date)->format('Y/m/d') }}
                             </td>
-                            <td class="px-4 py-4">{{ $correctionRequest->requested_note }}</td>
-                            <td class="px-4 py-4">{{ $correctionRequest->created_at->format('Y/m/d') }}</td>
-                            <td class="px-4 py-4">
-                                <a href="/attendance/detail/{{ $correctionRequest->attendance_id }}" class="font-semibold text-blue-600 hover:text-blue-800">
+                            <td>{{ $correctionRequest->requested_note }}</td>
+                            <td>{{ $correctionRequest->created_at->format('Y/m/d') }}</td>
+                            <td>
+                                <a href="{{ auth()->user()->role === 'admin' ? '/stamp_correction_request/approve/' . $correctionRequest->id : '/attendance/detail/' . $correctionRequest->attendance_id }}" class="font-bold text-black">
                                     詳細
                                 </a>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-4 py-8 text-center text-gray-500">
+                            <td colspan="6" class="text-center text-gray-500">
                                 申請データがありません。
                             </td>
                         </tr>

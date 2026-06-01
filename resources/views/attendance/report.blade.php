@@ -3,9 +3,9 @@
 @section('title', 'マイ勤怠レポート')
 
 @section('content')
-    <div class="mx-auto max-w-6xl px-6 py-10">
+    <div class="page-container">
         <div class="mb-8">
-            <h1 class="text-2xl font-bold text-gray-900">マイ勤怠レポート</h1>
+            <h1 class="page-title">マイ勤怠レポート</h1>
             <p class="mt-2 text-sm font-semibold text-gray-500">集計期間：{{ $report['period_label'] }}</p>
         </div>
 
@@ -29,9 +29,9 @@
 
         <section class="mb-10">
             <h2 class="mb-4 text-lg font-bold text-gray-900">月次推移（過去6ヶ月）</h2>
-            <div class="overflow-hidden rounded bg-white shadow-sm">
-                <table class="w-full table-auto border-collapse">
-                    <thead class="bg-gray-100 text-sm text-gray-700">
+            <div class="table-panel">
+                <table class="data-table">
+                    <thead class="text-sm">
                         <tr>
                             <th class="px-4 py-3 text-left">月</th>
                             <th class="px-4 py-3 text-left">労働時間</th>
@@ -40,10 +40,10 @@
                     </thead>
                     <tbody>
                         @foreach ($report['monthly_reports'] as $monthlyReport)
-                            <tr class="border-t text-sm">
-                                <td class="px-4 py-4 font-semibold">{{ $monthlyReport['month'] }}</td>
-                                <td class="px-4 py-4">{{ $monthlyReport['total_work_time'] }}</td>
-                                <td class="px-4 py-4">{{ $monthlyReport['average_work_time'] }}</td>
+                            <tr class="text-sm">
+                                <td class="font-semibold">{{ $monthlyReport['month'] }}</td>
+                                <td>{{ $monthlyReport['total_work_time'] }}</td>
+                                <td>{{ $monthlyReport['average_work_time'] }}</td>
                             </tr>
                         @endforeach
                     </tbody>

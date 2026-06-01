@@ -3,7 +3,22 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceReportController;
+use App\Http\Controllers\Admin\AttendanceController as AdminAttendanceController;
+use App\Http\Controllers\Admin\CorrectionRequestController as AdminCorrectionRequestController;
+use App\Http\Controllers\Admin\StaffController as AdminStaffController;
 use App\Http\Controllers\CorrectionRequestController;
+
+Route::get('/', function () {
+    if (! auth()->check()) {
+        return redirect('/login');
+    }
+
+    if (auth()->user()->role === 'admin') {
+        return redirect('/admin/attendance/list');
+    }
+
+    return redirect('/attendance');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/attendance', [AttendanceController::class, 'index']);
@@ -19,14 +34,18 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::middleware(['auth', 'admin'])->group(function () {
-    Route::get('/admin/attendance/list', function () {
-        return '<p>管理者：勤怠一覧画面</p>
-            <form method="POST" action="/logout">
-                ' . csrf_field() . '
-                <button type="submit">ログアウト</button>
-            </form>
-        ';
-    });
+    Route::get('/admin/attendance/list', [AdminAttendanceController::class, 'index']);
+    Route::get('/admin/attendance/{id}', [AdminAttendanceController::class, 'show']);
+    Route::post('/admin/attendance/{id}', [AdminAttendanceController::class, 'update']);
+    Route::get('/admin/staff/list', [AdminStaffController::class, 'index']);
+    Route::get('/admin/attendance/staff/{id}/csv', [AdminAttendanceController::class, 'exportStaffCsv']);
+    Route::get('/admin/attendance/staff/{id}', [AdminAttendanceController::class, 'staff']);
+    Route::get('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminCorrectionRequestController::class, 'show']);
+    Route::post('/stamp_correction_request/approve/{attendance_correct_request_id}', [AdminCorrectionRequestController::class, 'approve']);
+});
+
+Route::middleware('guest')->get('/admin/login', function () {
+    return view('auth.admin_login');
 });
 
 Route::middleware('auth')->get('/home', function () {
