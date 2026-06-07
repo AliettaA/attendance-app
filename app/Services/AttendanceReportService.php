@@ -43,6 +43,7 @@ class AttendanceReportService
             'monthly_reports' => $monthlyReports->map(function (array $report) {
                 return array_merge($report, [
                     'total_work_time' => $this->formatMinutes($report['total_work_minutes']),
+                    'total_overtime_time' => $this->formatMinutes($report['total_overtime_minutes']),
                     'average_work_time' => $this->formatMinutes($report['average_work_minutes']),
                 ]);
             }),

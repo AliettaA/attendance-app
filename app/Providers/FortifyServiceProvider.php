@@ -6,6 +6,7 @@ use App\Actions\Fortify\CreateNewUser;
 use App\Actions\Fortify\ResetUserPassword;
 use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
+use App\Http\Requests\Auth\LoginRequest;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\RateLimiter;
@@ -15,12 +16,14 @@ use Laravel\Fortify\Actions\RedirectIfTwoFactorAuthenticatable;
 use Laravel\Fortify\Fortify;
 use App\Http\Responses\LoginResponse;
 use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
+use Laravel\Fortify\Http\Requests\LoginRequest as FortifyLoginRequest;
 
 class FortifyServiceProvider extends ServiceProvider
 {
    
     public function register(): void
 {
+    $this->app->bind(FortifyLoginRequest::class, LoginRequest::class);
     $this->app->singleton(LoginResponseContract::class, LoginResponse::class);
 }
 
@@ -51,6 +54,10 @@ class FortifyServiceProvider extends ServiceProvider
 
         Fortify::registerView(function () {
             return view('auth.register');
-});
+        });
+
+        Fortify::verifyEmailView(function () {
+            return view('auth.verify-email');
+        });
     }
 }

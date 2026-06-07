@@ -39,6 +39,14 @@ class CorrectionRequestController extends Controller
 
             foreach ($correctionRequest->correctionRequestBreaks as $requestBreak) {
                 if ($requestBreak->original_break_time_id) {
+                    if (! $requestBreak->requested_break_start_at && ! $requestBreak->requested_break_end_at) {
+                        BreakTime::where('id', $requestBreak->original_break_time_id)
+                            ->where('attendance_id', $attendance->id)
+                            ->delete();
+
+                        continue;
+                    }
+
                     BreakTime::where('id', $requestBreak->original_break_time_id)
                         ->where('attendance_id', $attendance->id)
                         ->update([
@@ -65,7 +73,7 @@ class CorrectionRequestController extends Controller
             ]);
         });
 
-        return redirect('/stamp_correction_request/list?status=approved')
+        return redirect('/stamp_correction_request/list?status=pending')
             ->with('status', '修正申請を承認しました。');
     }
 }

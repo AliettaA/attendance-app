@@ -35,9 +35,10 @@
 
             @php
                 $requestBreakRows = $correctionRequest->correctionRequestBreaks->values();
+                $breakRowCount = max(2, $requestBreakRows->count());
             @endphp
 
-            @for ($index = 0; $index < 2; $index++)
+            @for ($index = 0; $index < $breakRowCount; $index++)
                 @php
                     $requestBreak = $requestBreakRows->get($index);
                 @endphp
@@ -59,14 +60,14 @@
 
         </div>
 
-        <div class="mt-6 text-right">
+        <div class="mt-8 text-right">
             @if ($correctionRequest->status === 'pending')
                 <form method="POST" action="/stamp_correction_request/approve/{{ $correctionRequest->id }}">
                     @csrf
-                    <button type="submit" class="btn-primary">承認</button>
+                    <button type="submit" class="btn-action">承認</button>
                 </form>
             @else
-                <button type="button" class="btn-primary cursor-not-allowed bg-gray-400" disabled>修正済み</button>
+                <button type="button" class="btn-action-muted" disabled>修正済み</button>
             @endif
         </div>
     </main>

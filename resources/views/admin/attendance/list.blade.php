@@ -35,9 +35,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($attendances as $attendance)
+                    @forelse ($users as $user)
                         @php
-                            $breakMinutes = $attendance->breakTimes->sum(function ($breakTime) {
+                            $attendance = $user->attendances->first();
+                            $breakMinutes = $attendance?->breakTimes->sum(function ($breakTime) {
                                 if (! $breakTime->break_start_at || ! $breakTime->break_end_at) {
                                     return 0;
                                 }
@@ -47,20 +48,22 @@
                             });
                             $workMinutes = 0;
 
-                            if ($attendance->clock_in_at && $attendance->clock_out_at) {
+                            if ($attendance?->clock_in_at && $attendance?->clock_out_at) {
                                 $workMinutes = \Carbon\Carbon::parse($attendance->clock_in_at)
                                     ->diffInMinutes(\Carbon\Carbon::parse($attendance->clock_out_at)) - $breakMinutes;
                             }
                         @endphp
 
                         <tr>
-                            <td>{{ $attendance->user->name }}</td>
-                            <td>{{ $attendance->clock_in_at ? \Carbon\Carbon::parse($attendance->clock_in_at)->format('H:i') : '' }}</td>
-                            <td>{{ $attendance->clock_out_at ? \Carbon\Carbon::parse($attendance->clock_out_at)->format('H:i') : '' }}</td>
-                            <td>{{ sprintf('%d:%02d', intdiv($breakMinutes, 60), $breakMinutes % 60) }}</td>
-                            <td>{{ sprintf('%d:%02d', intdiv(max($workMinutes, 0), 60), max($workMinutes, 0) % 60) }}</td>
+                            <td>{{ $user->name }}</td>
+                            <td>{{ $attendance?->clock_in_at ? \Carbon\Carbon::parse($attendance->clock_in_at)->format('H:i') : '' }}</td>
+                            <td>{{ $attendance?->clock_out_at ? \Carbon\Carbon::parse($attendance->clock_out_at)->format('H:i') : '' }}</td>
+                            <td>{{ $attendance ? sprintf('%d:%02d', intdiv($breakMinutes, 60), $breakMinutes % 60) : '' }}</td>
+                            <td>{{ $attendance ? sprintf('%d:%02d', intdiv(max($workMinutes, 0), 60), max($workMinutes, 0) % 60) : '' }}</td>
                             <td>
-                                <a href="/admin/attendance/{{ $attendance->id }}" class="font-bold text-black">詳細</a>
+                                @if ($attendance)
+                                    <a href="/admin/attendance/{{ $attendance->id }}" class="font-bold text-black">詳細</a>
+                                @endif
                             </td>
                         </tr>
                     @empty

@@ -9,6 +9,7 @@ use App\Models\Attendance;
 use App\Models\CorrectionRequest;
 use App\Models\CorrectionRequestBreak;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 
 class AttendanceController extends Controller
 {
@@ -72,15 +73,42 @@ class AttendanceController extends Controller
             ->whereBetween('work_date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
             ->with('breakTimes')
             ->orderBy('work_date')
-            ->get();
+            ->get()
+            ->keyBy(fn (Attendance $attendance) => Carbon::parse($attendance->work_date)->toDateString());
+        $dates = collect(CarbonPeriod::create($startOfMonth, $endOfMonth));
         $previousMonth = $month->copy()->subMonth()->format('Y-m');
         $nextMonth = $month->copy()->addMonth()->format('Y-m');
         return view('attendance.list', compact(
             'month',
+            'dates',
             'attendances',
             'previousMonth',
             'nextMonth'
         ));
+    }
+
+    public function createByDate(Request $request)
+    {
+        $workDate = Carbon::parse($request->query('date', today()->toDateString()))->toDateString();
+        $existingAttendance = Attendance::where('user_id', $request->user()->id)
+            ->whereDate('work_date', $workDate)
+            ->first();
+
+        if ($existingAttendance) {
+            return redirect("/attendance/detail/{$existingAttendance->id}");
+        }
+
+        $attendance = new Attendance([
+            'user_id' => $request->user()->id,
+            'work_date' => $workDate,
+            'status' => 'finished',
+        ]);
+        $attendance->setRelation('user', $request->user());
+        $attendance->setRelation('breakTimes', collect());
+        $attendance->setRelation('correctionRequests', collect());
+        $pendingCorrectionRequest = null;
+
+        return view('attendance.detail', compact('attendance', 'pendingCorrectionRequest'));
     }
     public function show(Request $request, $id)
     {
@@ -117,12 +145,15 @@ class AttendanceController extends Controller
             'status' => 'pending',
         ]);
         foreach ($validated['breaks'] ?? [] as $break) {
-            if (empty($break['start']) && empty($break['end'])) {
+            $originalBreakTimeId = $break['original_break_time_id'] ?? null;
+
+            if (empty($break['start']) && empty($break['end']) && ! $originalBreakTimeId) {
                 continue;
             }
+
             CorrectionRequestBreak::create([
                 'correction_request_id' => $correctionRequest->id,
-                'original_break_time_id' => $break['original_break_time_id'] ?? null,
+                'original_break_time_id' => $originalBreakTimeId,
                 'requested_break_start_at' => ! empty($break['start'])
                     ? Carbon::parse($workDate . ' ' . $break['start'])
                     : null,
@@ -131,6 +162,59 @@ class AttendanceController extends Controller
                     : null,
             ]);
         }
+        return redirect("/attendance/detail/{$attendance->id}")
+            ->with('status', '修正申請を送信しました。');
+    }
+
+    public function storeCorrectionRequestByDate(AttendanceCorrectionRequest $request)
+    {
+        $workDate = Carbon::parse($request->input('work_date'))->toDateString();
+        $validated = $request->validated();
+
+        $attendance = Attendance::firstOrCreate(
+            [
+                'user_id' => $request->user()->id,
+                'work_date' => $workDate,
+            ],
+            [
+                'status' => 'finished',
+            ]
+        );
+
+        $hasPendingRequest = $attendance->correctionRequests()
+            ->where('status', 'pending')
+            ->exists();
+
+        if ($hasPendingRequest) {
+            return redirect("/attendance/detail/{$attendance->id}");
+        }
+
+        $correctionRequest = CorrectionRequest::create([
+            'user_id' => $request->user()->id,
+            'attendance_id' => $attendance->id,
+            'requested_clock_in_at' => Carbon::parse($workDate . ' ' . $validated['clock_in_at']),
+            'requested_clock_out_at' => Carbon::parse($workDate . ' ' . $validated['clock_out_at']),
+            'requested_note' => $validated['note'],
+            'status' => 'pending',
+        ]);
+
+        foreach ($validated['breaks'] ?? [] as $break) {
+            if (empty($break['start']) && empty($break['end'])) {
+                continue;
+            }
+
+            CorrectionRequestBreak::create([
+                'correction_request_id' => $correctionRequest->id,
+                'original_break_time_id' => null,
+                'requested_break_start_at' => ! empty($break['start'])
+                    ? Carbon::parse($workDate . ' ' . $break['start'])
+                    : null,
+                'requested_break_end_at' => ! empty($break['end'])
+                    ? Carbon::parse($workDate . ' ' . $break['end'])
+                    : null,
+            ]);
+        }
+
         return redirect("/attendance/detail/{$attendance->id}")
             ->with('status', '修正申請を送信しました。');
     }

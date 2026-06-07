@@ -20,15 +20,18 @@ class AttendanceController extends Controller
             ? Carbon::parse($request->query('date'))
             : Carbon::today();
 
-        $attendances = Attendance::with(['user', 'breakTimes'])
-            ->whereDate('work_date', $date->toDateString())
-            ->get()
-            ->sortBy('user.name');
+        $users = User::where('role', 'user')
+            ->with(['attendances' => function ($query) use ($date) {
+                $query->whereDate('work_date', $date->toDateString())
+                    ->with('breakTimes');
+            }])
+            ->orderBy('name')
+            ->get();
 
         $previousDate = $date->copy()->subDay()->toDateString();
         $nextDate = $date->copy()->addDay()->toDateString();
 
-        return view('admin.attendance.list', compact('date', 'attendances', 'previousDate', 'nextDate'));
+        return view('admin.attendance.list', compact('date', 'users', 'previousDate', 'nextDate'));
     }
 
     public function show($id)
@@ -38,6 +41,31 @@ class AttendanceController extends Controller
         $pendingCorrectionRequest = $attendance->correctionRequests
             ->where('status', 'pending')
             ->first();
+
+        return view('admin.attendance.detail', compact('attendance', 'pendingCorrectionRequest'));
+    }
+
+    public function createForStaffDate(Request $request, $id)
+    {
+        $user = User::where('role', 'user')->findOrFail($id);
+        $workDate = Carbon::parse($request->query('date', today()->toDateString()))->toDateString();
+        $existingAttendance = Attendance::where('user_id', $user->id)
+            ->whereDate('work_date', $workDate)
+            ->first();
+
+        if ($existingAttendance) {
+            return redirect("/admin/attendance/{$existingAttendance->id}");
+        }
+
+        $attendance = new Attendance([
+            'user_id' => $user->id,
+            'work_date' => $workDate,
+            'status' => 'finished',
+        ]);
+        $attendance->setRelation('user', $user);
+        $attendance->setRelation('breakTimes', collect());
+        $attendance->setRelation('correctionRequests', collect());
+        $pendingCorrectionRequest = null;
 
         return view('admin.attendance.detail', compact('attendance', 'pendingCorrectionRequest'));
     }
@@ -95,6 +123,41 @@ class AttendanceController extends Controller
                     'attendance_id' => $attendance->id,
                 ]));
             }
+        });
+
+        return redirect("/admin/attendance/{$attendance->id}")
+            ->with('status', '勤怠情報を更新しました。');
+    }
+
+    public function storeForStaffDate(AttendanceCorrectionRequest $request, $id)
+    {
+        $user = User::where('role', 'user')->findOrFail($id);
+        $workDate = Carbon::parse($request->input('work_date'))->toDateString();
+        $validated = $request->validated();
+
+        $attendance = DB::transaction(function () use ($user, $validated, $workDate) {
+            $attendance = Attendance::create([
+                'user_id' => $user->id,
+                'work_date' => $workDate,
+                'clock_in_at' => Carbon::parse($workDate . ' ' . $validated['clock_in_at']),
+                'clock_out_at' => Carbon::parse($workDate . ' ' . $validated['clock_out_at']),
+                'note' => $validated['note'],
+                'status' => 'finished',
+            ]);
+
+            foreach ($validated['breaks'] ?? [] as $break) {
+                if (empty($break['start']) && empty($break['end'])) {
+                    continue;
+                }
+
+                BreakTime::create([
+                    'attendance_id' => $attendance->id,
+                    'break_start_at' => Carbon::parse($workDate . ' ' . $break['start']),
+                    'break_end_at' => Carbon::parse($workDate . ' ' . $break['end']),
+                ]);
+            }
+
+            return $attendance;
         });
 
         return redirect("/admin/attendance/{$attendance->id}")

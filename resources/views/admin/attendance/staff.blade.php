@@ -52,9 +52,7 @@
                             <td>{{ $attendance ? sprintf('%d:%02d', intdiv($breakMinutes, 60), $breakMinutes % 60) : '' }}</td>
                             <td>{{ $attendance ? sprintf('%d:%02d', intdiv(max($workMinutes, 0), 60), max($workMinutes, 0) % 60) : '' }}</td>
                             <td>
-                                @if ($attendance)
-                                    <a href="/admin/attendance/{{ $attendance->id }}" class="font-bold text-black">詳細</a>
-                                @endif
+                                <a href="{{ $attendance ? '/admin/attendance/' . $attendance->id : '/admin/attendance/staff/' . $user->id . '/detail/create?date=' . $date->toDateString() }}" class="font-bold text-black">詳細</a>
                             </td>
                         </tr>
                     @endforeach

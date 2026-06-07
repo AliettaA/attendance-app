@@ -7,37 +7,47 @@
         <div class="auth-panel">
             <h1 class="auth-title">会員登録</h1>
 
-            @if ($errors->any())
-                <div class="auth-error-box">
-                    @foreach ($errors->all() as $error)
-                        <p>{{ $error }}</p>
-                    @endforeach
-                </div>
-            @else
-                <div class="auth-error-space"></div>
-            @endif
-
-            <form method="POST" action="/register">
+            <form method="POST" action="/register" class="auth-form">
                 @csrf
 
                 <div class="form-group">
                     <label for="name" class="form-label">名前</label>
-                    <input id="name" class="form-input" type="text" name="name" value="{{ old('name') }}" required>
+                    <input id="name" class="form-input" type="text" name="name" value="{{ old('name') }}">
+                    <p class="form-error">
+                        @error('name')
+                            {{ $message }}
+                        @enderror
+                    </p>
                 </div>
 
                 <div class="form-group">
                     <label for="email" class="form-label">メールアドレス</label>
-                    <input id="email" class="form-input" type="email" name="email" value="{{ old('email') }}" required>
+                    <input id="email" class="form-input" type="text" name="email" value="{{ old('email') }}">
+                    <p class="form-error">
+                        @error('email')
+                            {{ $message }}
+                        @enderror
+                    </p>
                 </div>
 
                 <div class="form-group">
                     <label for="password" class="form-label">パスワード</label>
-                    <input id="password" class="form-input" type="password" name="password" required>
+                    <input id="password" class="form-input" type="password" name="password">
+                    <p class="form-error">
+                        @error('password')
+                            {{ $message }}
+                        @enderror
+                    </p>
                 </div>
 
                 <div class="form-group">
                     <label for="password_confirmation" class="form-label">確認用パスワード</label>
-                    <input id="password_confirmation" class="form-input" type="password" name="password_confirmation" required>
+                    <input id="password_confirmation" class="form-input" type="password" name="password_confirmation">
+                    <p class="form-error">
+                        @error('password_confirmation')
+                            {{ $message }}
+                        @enderror
+                    </p>
                 </div>
 
                 <button type="submit" class="auth-submit">登録する</button>

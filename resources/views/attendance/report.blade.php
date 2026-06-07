@@ -35,6 +35,7 @@
                         <tr>
                             <th class="px-4 py-3 text-left">月</th>
                             <th class="px-4 py-3 text-left">労働時間</th>
+                            <th class="px-4 py-3 text-left">残業時間</th>
                             <th class="px-4 py-3 text-left">平均労働時間 / 日</th>
                         </tr>
                     </thead>
@@ -43,6 +44,7 @@
                             <tr class="text-sm">
                                 <td class="font-semibold">{{ $monthlyReport['month'] }}</td>
                                 <td>{{ $monthlyReport['total_work_time'] }}</td>
+                                <td>{{ $monthlyReport['total_overtime_time'] }}</td>
                                 <td>{{ $monthlyReport['average_work_time'] }}</td>
                             </tr>
                         @endforeach

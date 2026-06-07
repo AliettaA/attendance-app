@@ -49,6 +49,12 @@
     <main>
         @yield('content')
     </main>
+
+    @if (session('status'))
+        <div class="flash-message">
+            {{ session('status') === 'verification-link-sent' ? '認証メールを再送信しました。' : session('status') }}
+        </div>
+    @endif
 </body>
 
 </html>

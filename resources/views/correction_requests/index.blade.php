@@ -6,12 +6,6 @@
     <div class="page-container">
         <h1 class="page-title mb-8">申請一覧</h1>
 
-        @if (session('status'))
-            <div class="mb-6 rounded bg-green-100 px-4 py-3 text-green-800">
-                {{ session('status') }}
-            </div>
-        @endif
-
         <div class="mb-6 flex border-b border-gray-300">
             <a href="/stamp_correction_request/list?status=pending"
                 class="px-8 py-3 text-sm font-semibold {{ $status === 'pending' ? 'border-b-2 border-black text-black' : 'text-gray-500' }}">

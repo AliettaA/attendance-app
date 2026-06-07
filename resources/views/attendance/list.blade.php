@@ -39,22 +39,23 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($attendances as $attendance)
+                    @foreach ($dates as $date)
                         @php
                             $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
-                            $workDate = \Carbon\Carbon::parse($attendance->work_date);
-                            $breakMinutes = $attendance->breakTimes->sum(function ($breakTime) {
+                            $attendance = $attendances->get($date->toDateString());
+                            $workDate = $date;
+                            $breakMinutes = $attendance?->breakTimes->sum(function ($breakTime) {
                                 if (is_null($breakTime->break_end_at)) {
                                     return 0;
                                 }
 
                                 return \Carbon\Carbon::parse($breakTime->break_start_at)
                                     ->diffInMinutes(\Carbon\Carbon::parse($breakTime->break_end_at));
-                            });
+                            }) ?? 0;
 
                             $workMinutes = 0;
 
-                            if ($attendance->clock_in_at && $attendance->clock_out_at) {
+                            if ($attendance?->clock_in_at && $attendance?->clock_out_at) {
                                 $workMinutes = \Carbon\Carbon::parse($attendance->clock_in_at)
                                     ->diffInMinutes(\Carbon\Carbon::parse($attendance->clock_out_at)) - $breakMinutes;
                             }
@@ -70,30 +71,24 @@
                                 {{ $workDate->format('m/d') }}（{{ $weekdays[$workDate->dayOfWeek] }}）
                             </td>
                             <td>
-                                {{ $attendance->clock_in_at ? \Carbon\Carbon::parse($attendance->clock_in_at)->format('H:i') : '' }}
+                                {{ $attendance?->clock_in_at ? \Carbon\Carbon::parse($attendance->clock_in_at)->format('H:i') : '' }}
                             </td>
                             <td>
-                                {{ $attendance->clock_out_at ? \Carbon\Carbon::parse($attendance->clock_out_at)->format('H:i') : '' }}
+                                {{ $attendance?->clock_out_at ? \Carbon\Carbon::parse($attendance->clock_out_at)->format('H:i') : '' }}
                             </td>
                             <td>
-                                {{ sprintf('%d:%02d', $breakHours, $breakRemainderMinutes) }}
+                                {{ $attendance ? sprintf('%d:%02d', $breakHours, $breakRemainderMinutes) : '' }}
                             </td>
                             <td>
-                                {{ sprintf('%d:%02d', $workHours, $workRemainderMinutes) }}
+                                {{ $attendance ? sprintf('%d:%02d', $workHours, $workRemainderMinutes) : '' }}
                             </td>
                             <td>
-                                <a href="/attendance/detail/{{ $attendance->id }}" class="font-bold text-black">
+                                <a href="{{ $attendance ? '/attendance/detail/' . $attendance->id : '/attendance/detail/create?date=' . $date->toDateString() }}" class="font-bold text-black">
                                     詳細
                                 </a>
                             </td>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="text-center text-gray-500">
-                                勤怠データがありません。
-                            </td>
-                        </tr>
-                    @endforelse
+                    @endforeach
                 </tbody>
             </table>
         </div>
