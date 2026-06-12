@@ -7,6 +7,7 @@ use App\Http\Requests\AttendanceCorrectionRequest;
 use App\Models\Attendance;
 use App\Models\BreakTime;
 use App\Models\User;
+use App\Services\AttendanceService;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
@@ -14,6 +15,8 @@ use Illuminate\Support\Facades\DB;
 
 class AttendanceController extends Controller
 {
+    public function __construct(private AttendanceService $attendanceService) {}
+
     public function index(Request $request)
     {
         $date = $request->query('date')
@@ -28,10 +31,19 @@ class AttendanceController extends Controller
             ->orderBy('name')
             ->get();
 
+        $attendanceRows = $users->map(function (User $user) {
+            $attendance = $user->attendances->first();
+
+            return array_merge([
+                'name' => $user->name,
+                'detail_url' => $attendance ? route('admin.attendance.show', ['id' => $attendance->id]) : null,
+            ], $this->attendanceService->attendanceSummary($attendance));
+        });
+
         $previousDate = $date->copy()->subDay()->toDateString();
         $nextDate = $date->copy()->addDay()->toDateString();
 
-        return view('admin.attendance.list', compact('date', 'users', 'previousDate', 'nextDate'));
+        return view('admin.attendance.list', compact('date', 'attendanceRows', 'previousDate', 'nextDate'));
     }
 
     public function show($id)
@@ -54,7 +66,7 @@ class AttendanceController extends Controller
             ->first();
 
         if ($existingAttendance) {
-            return redirect("/admin/attendance/{$existingAttendance->id}");
+            return redirect()->route('admin.attendance.show', ['id' => $existingAttendance->id]);
         }
 
         $attendance = new Attendance([
@@ -78,7 +90,7 @@ class AttendanceController extends Controller
             ->isNotEmpty();
 
         if ($hasPendingCorrectionRequest) {
-            return redirect("/admin/attendance/{$attendance->id}");
+            return redirect()->route('admin.attendance.show', ['id' => $attendance->id]);
         }
 
         $workDate = Carbon::parse($attendance->work_date)->toDateString();
@@ -86,8 +98,8 @@ class AttendanceController extends Controller
 
         DB::transaction(function () use ($attendance, $validated, $workDate) {
             $attendance->update([
-                'clock_in_at' => Carbon::parse($workDate . ' ' . $validated['clock_in_at']),
-                'clock_out_at' => Carbon::parse($workDate . ' ' . $validated['clock_out_at']),
+                'clock_in_at' => Carbon::parse($workDate.' '.$validated['clock_in_at']),
+                'clock_out_at' => Carbon::parse($workDate.' '.$validated['clock_out_at']),
                 'note' => $validated['note'],
             ]);
 
@@ -107,8 +119,8 @@ class AttendanceController extends Controller
                 }
 
                 $values = [
-                    'break_start_at' => Carbon::parse($workDate . ' ' . $breakStart),
-                    'break_end_at' => Carbon::parse($workDate . ' ' . $breakEnd),
+                    'break_start_at' => Carbon::parse($workDate.' '.$breakStart),
+                    'break_end_at' => Carbon::parse($workDate.' '.$breakEnd),
                 ];
 
                 if ($originalBreakTimeId) {
@@ -125,7 +137,7 @@ class AttendanceController extends Controller
             }
         });
 
-        return redirect("/admin/attendance/{$attendance->id}")
+        return redirect()->route('admin.attendance.show', ['id' => $attendance->id])
             ->with('status', '勤怠情報を更新しました。');
     }
 
@@ -139,8 +151,8 @@ class AttendanceController extends Controller
             $attendance = Attendance::create([
                 'user_id' => $user->id,
                 'work_date' => $workDate,
-                'clock_in_at' => Carbon::parse($workDate . ' ' . $validated['clock_in_at']),
-                'clock_out_at' => Carbon::parse($workDate . ' ' . $validated['clock_out_at']),
+                'clock_in_at' => Carbon::parse($workDate.' '.$validated['clock_in_at']),
+                'clock_out_at' => Carbon::parse($workDate.' '.$validated['clock_out_at']),
                 'note' => $validated['note'],
                 'status' => 'finished',
             ]);
@@ -152,15 +164,15 @@ class AttendanceController extends Controller
 
                 BreakTime::create([
                     'attendance_id' => $attendance->id,
-                    'break_start_at' => Carbon::parse($workDate . ' ' . $break['start']),
-                    'break_end_at' => Carbon::parse($workDate . ' ' . $break['end']),
+                    'break_start_at' => Carbon::parse($workDate.' '.$break['start']),
+                    'break_end_at' => Carbon::parse($workDate.' '.$break['end']),
                 ]);
             }
 
             return $attendance;
         });
 
-        return redirect("/admin/attendance/{$attendance->id}")
+        return redirect()->route('admin.attendance.show', ['id' => $attendance->id])
             ->with('status', '勤怠情報を更新しました。');
     }
 
@@ -182,11 +194,22 @@ class AttendanceController extends Controller
             ->keyBy(fn (Attendance $attendance) => Carbon::parse($attendance->work_date)->toDateString());
 
         $dates = collect(CarbonPeriod::create($startOfMonth, $endOfMonth));
+        $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
+        $attendanceRows = $dates->map(function (Carbon $date) use ($attendances, $user, $weekdays) {
+            $attendance = $attendances->get($date->toDateString());
+
+            return array_merge([
+                'date' => $date->format('m/d').'（'.$weekdays[$date->dayOfWeek].'）',
+                'detail_url' => $attendance
+                    ? route('admin.attendance.show', ['id' => $attendance->id])
+                    : route('admin.attendance.staff.detail.create', ['id' => $user->id, 'date' => $date->toDateString()]),
+            ], $this->attendanceService->attendanceSummary($attendance));
+        });
 
         $previousMonth = $month->copy()->subMonth()->format('Y-m');
         $nextMonth = $month->copy()->addMonth()->format('Y-m');
 
-        return view('admin.attendance.staff', compact('user', 'month', 'dates', 'attendances', 'previousMonth', 'nextMonth'));
+        return view('admin.attendance.staff', compact('user', 'month', 'attendanceRows', 'previousMonth', 'nextMonth'));
     }
 
     public function exportStaffCsv(Request $request, $id)
@@ -211,7 +234,7 @@ class AttendanceController extends Controller
             $month->copy()->endOfMonth()
         ));
 
-        $fileName = 'attendance_' . $user->id . '_' . $month->format('Y_m') . '.csv';
+        $fileName = 'attendance_'.$user->id.'_'.$month->format('Y_m').'.csv';
 
         return response()->streamDownload(function () use ($dates, $attendances) {
             $handle = fopen('php://output', 'w');
@@ -222,30 +245,18 @@ class AttendanceController extends Controller
 
                 if (! $attendance) {
                     fputcsv($handle, [$date->format('Y/m/d'), '', '', '', '']);
+
                     continue;
                 }
 
-                $breakMinutes = $attendance->breakTimes->sum(function ($breakTime) {
-                    if (! $breakTime->break_start_at || ! $breakTime->break_end_at) {
-                        return 0;
-                    }
-
-                    return Carbon::parse($breakTime->break_start_at)
-                        ->diffInMinutes(Carbon::parse($breakTime->break_end_at));
-                });
-                $workMinutes = 0;
-
-                if ($attendance->clock_in_at && $attendance->clock_out_at) {
-                    $workMinutes = Carbon::parse($attendance->clock_in_at)
-                        ->diffInMinutes(Carbon::parse($attendance->clock_out_at)) - $breakMinutes;
-                }
+                $summary = $this->attendanceService->attendanceSummary($attendance);
 
                 fputcsv($handle, [
                     Carbon::parse($attendance->work_date)->format('Y/m/d'),
-                    $attendance->clock_in_at ? Carbon::parse($attendance->clock_in_at)->format('H:i') : '',
-                    $attendance->clock_out_at ? Carbon::parse($attendance->clock_out_at)->format('H:i') : '',
-                    sprintf('%d:%02d', intdiv($breakMinutes, 60), $breakMinutes % 60),
-                    sprintf('%d:%02d', intdiv(max($workMinutes, 0), 60), max($workMinutes, 0) % 60),
+                    $summary['clock_in'],
+                    $summary['clock_out'],
+                    $summary['break_time'],
+                    $summary['work_time'],
                 ]);
             }
 

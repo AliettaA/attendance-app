@@ -8,7 +8,7 @@
             <h1 class="page-title">勤怠詳細</h1>
         </div>
 
-        <form method="POST" action="{{ $attendance->exists ? '/admin/attendance/' . $attendance->id : '/admin/attendance/staff/' . $attendance->user_id . '/detail/create' }}">
+        <form method="POST" action="{{ $attendance->exists ? route('admin.attendance.update', ['id' => $attendance->id]) : route('admin.attendance.staff.detail.store', ['id' => $attendance->user_id]) }}">
             @csrf
             @unless ($attendance->exists)
                 <input type="hidden" name="work_date" value="{{ \Carbon\Carbon::parse($attendance->work_date)->toDateString() }}">
@@ -26,19 +26,19 @@
 
                 <div class="detail-row">
                     <div class="detail-label">日付</div>
-                    <div class="detail-input-row">
-                        <span class="inline-block w-28">{{ $workDate->format('Y年') }}</span>
-                        <span class="inline-block w-28">{{ $workDate->format('n月 j日') }}</span>
+                    <div class="detail-input-row detail-date-row">
+                        <span>{{ $workDate->format('Y年') }}</span>
+                        <span>{{ $workDate->format('n月 j日') }}</span>
                     </div>
                 </div>
 
                 <div class="detail-row">
                     <div class="detail-label">出勤・退勤</div>
-                    <div class="detail-input-row">
+                    <div class="detail-input-row detail-time-row">
                         <input type="time" name="clock_in_at"
                             value="{{ old('clock_in_at', $attendance->clock_in_at ? \Carbon\Carbon::parse($attendance->clock_in_at)->format('H:i') : '') }}"
                             class="time-input" @disabled($pendingCorrectionRequest)>
-                        <span>〜</span>
+                        <span class="time-separator">〜</span>
                         <input type="time" name="clock_out_at"
                             value="{{ old('clock_out_at', $attendance->clock_out_at ? \Carbon\Carbon::parse($attendance->clock_out_at)->format('H:i') : '') }}"
                             class="time-input" @disabled($pendingCorrectionRequest)>
@@ -67,13 +67,13 @@
                         <div class="detail-label">
                             休憩{{ $index + 1 }}
                         </div>
-                        <div class="detail-input-row">
+                        <div class="detail-input-row detail-time-row">
                             <input type="hidden" name="breaks[{{ $index }}][original_break_time_id]"
                                 value="{{ old('breaks.' . $index . '.original_break_time_id', $breakTime?->id) }}">
                             <input type="time" name="breaks[{{ $index }}][start]"
                                 value="{{ old('breaks.' . $index . '.start', $breakTime?->break_start_at ? \Carbon\Carbon::parse($breakTime->break_start_at)->format('H:i') : '') }}"
                                 class="time-input" @disabled($pendingCorrectionRequest)>
-                            <span>〜</span>
+                            <span class="time-separator">〜</span>
                             <input type="time" name="breaks[{{ $index }}][end]"
                                 value="{{ old('breaks.' . $index . '.end', $breakTime?->break_end_at ? \Carbon\Carbon::parse($breakTime->break_end_at)->format('H:i') : '') }}"
                                 class="time-input" @disabled($pendingCorrectionRequest)>

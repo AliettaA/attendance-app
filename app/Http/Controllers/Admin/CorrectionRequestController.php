@@ -19,7 +19,41 @@ class CorrectionRequestController extends Controller
             'correctionRequestBreaks.originalBreakTime',
         ])->findOrFail($id);
 
-        return view('admin.correction_requests.approve', compact('correctionRequest'));
+        $workDate = Carbon::parse($correctionRequest->attendance->work_date);
+        $breakRows = $correctionRequest->correctionRequestBreaks
+            ->values()
+            ->map(function ($requestBreak) {
+                return [
+                    'start' => $this->formatTime($requestBreak->requested_break_start_at),
+                    'end' => $this->formatTime($requestBreak->requested_break_end_at),
+                ];
+            });
+
+        while ($breakRows->count() < 2) {
+            $breakRows->push([
+                'start' => '',
+                'end' => '',
+            ]);
+        }
+
+        $correctionRequestView = [
+            'id' => $correctionRequest->id,
+            'status' => $correctionRequest->status,
+            'user_name' => $correctionRequest->user->name,
+            'work_year' => $workDate->format('Y年'),
+            'work_date' => $workDate->format('n月 j日'),
+            'clock_in' => $this->formatTime($correctionRequest->requested_clock_in_at),
+            'clock_out' => $this->formatTime($correctionRequest->requested_clock_out_at),
+            'break_rows' => $breakRows,
+            'note' => $correctionRequest->requested_note,
+        ];
+
+        return view('admin.correction_requests.approve', compact('correctionRequestView'));
+    }
+
+    private function formatTime($time): string
+    {
+        return $time ? Carbon::parse($time)->format('H:i') : '';
     }
 
     public function approve(Request $request, $id)
@@ -73,7 +107,7 @@ class CorrectionRequestController extends Controller
             ]);
         });
 
-        return redirect('/stamp_correction_request/list?status=pending')
+        return redirect()->route('correction_requests.index', ['status' => 'pending'])
             ->with('status', '修正申請を承認しました。');
     }
 }

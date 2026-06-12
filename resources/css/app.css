@@ -13,6 +13,10 @@
         @apply flex min-h-[calc(100vh-72px)] items-start justify-center bg-white px-6 pt-24;
     }
 
+    .verify-email-page {
+        @apply items-center pt-0 pb-20;
+    }
+
     .auth-panel {
         width: 680px;
         max-width: 100%;
@@ -90,7 +94,7 @@
     }
 
     .attendance-current-time {
-        @apply mb-10 text-[80px] font-bold tracking-normal text-gray-900;
+        @apply mb-20 text-[80px] font-bold tracking-normal text-gray-900;
     }
 
     .btn-primary {
@@ -118,22 +122,21 @@
     }
 
     .detail-label {
-        @apply bg-white px-10 py-3 text-[16px] font-normal text-gray-500;
+        @apply bg-white px-10 py-5 text-[16px] font-normal text-gray-500;
     }
 
     .page-title {
-        @apply flex items-center gap-4 text-[36px] font-bold text-black;
+        @apply flex items-center gap-4 text-[30px] font-bold text-black mb-8;
     }
 
     .page-title::before {
         content: '';
-        @apply block w-1.5 rounded-sm bg-black;
+        @apply block w-1.5 bg-black;
         height: 34px;
     }
 
     .table-panel {
-        @apply overflow-hidden bg-white shadow;
-        border-radius: 10px;
+        @apply overflow-hidden bg-white rounded;
     }
 
     .data-table {
@@ -145,24 +148,52 @@
     }
 
     .data-table th {
-        @apply border-b-[3px] border-gray-100 px-4 py-3 text-left font-bold text-gray-500;
+        @apply border-b-[3px] border-gray-200 px-4 py-3 text-[16px] text-left font-bold text-gray-500;
     }
 
     .data-table td {
-        @apply border-b-2 border-gray-100 px-4 py-3;
+        @apply border-b-2 border-gray-200 text-[16px] text-gray-500 px-4 py-3;
     }
 
     .data-table tbody tr:last-child td {
         @apply border-b-0;
     }
 
+    .report-monthly-table th,
+    .report-monthly-table td {
+        @apply py-2 text-black;
+    }
+
+    .report-monthly-table th:nth-child(2),
+    .report-monthly-table th:nth-child(3),
+    .report-monthly-table td:nth-child(2),
+    .report-monthly-table td:nth-child(3) {
+        @apply text-right;
+    }
+
+    .report-monthly-table tbody tr:last-child td {
+        @apply border-b-2;
+    }
+
+    .report-card {
+        @apply rounded border-2 border-gray-200 bg-gray-50 px-4 py-2;
+    }
+
+    .report-card-label {
+        @apply text-[16px] font-semibold text-gray-500;
+    }
+
+    .report-card-value {
+        @apply mt-3 text-2xl font-bold text-gray-900;
+    }
+
     .detail-panel {
-        @apply overflow-hidden bg-white shadow;
-        border-radius: 10px;
+        @apply overflow-hidden bg-white rounded;
     }
 
     .detail-row {
-        @apply grid grid-cols-3 border-[2px] border-gray-100 bg-white;
+        @apply grid border-b-[3px] border-gray-100 bg-white;
+        grid-template-columns: 250px 1fr;
     }
 
     .detail-row:last-child {
@@ -170,15 +201,52 @@
     }
 
     .detail-value {
-        @apply col-span-2 px-4 py-3 text-[16px] font-bold text-black;
+        @apply px-10 py-5 text-[16px] font-bold text-black;
+        padding-left: 90px;
     }
 
     .detail-input-row {
-        @apply col-span-2 flex flex-wrap items-center gap-4 px-4 py-3 text-[16px] font-bold text-black;
+        @apply flex flex-wrap items-center gap-4 px-10 py-5 text-[16px] font-bold text-black;
+    }
+
+    .detail-date-row,
+    .detail-time-row {
+        @apply grid items-center gap-0;
+        grid-template-columns: 120px 72px 120px;
+    }
+
+    .detail-date-row > span:first-child {
+        grid-column: 1;
+    }
+
+    .detail-date-row > span:last-child {
+        grid-column: 3;
+    }
+
+    .detail-date-row > span,
+    .detail-time-row > input,
+    .detail-time-row > span:not(.time-separator) {
+        @apply justify-self-center;
     }
 
     .detail-error {
         @apply basis-full text-sm text-[14px] font-normal text-red-500;
+    }
+
+    .detail-time-row .detail-error {
+        grid-column: 1 / -1;
+    }
+
+    .detail-display-value {
+        @apply inline-flex min-h-[42px] items-center;
+    }
+
+    .detail-display-note {
+        @apply min-h-[84px] whitespace-pre-wrap py-2;
+    }
+
+    .time-separator {
+        @apply inline-flex w-full items-center justify-center;
     }
 
     .time-input {

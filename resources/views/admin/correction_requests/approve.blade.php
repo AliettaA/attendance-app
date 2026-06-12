@@ -4,65 +4,52 @@
 
 @section('content')
     <main class="page-container">
-        <h1 class="page-title mb-8">修正申請承認</h1>
+        <h1 class="page-title">修正申請承認</h1>
 
         <div class="detail-panel">
             <div class="detail-row">
                 <div class="detail-label">名前</div>
-                <div class="detail-value">{{ $correctionRequest->user->name }}</div>
+                <div class="detail-value">{{ $correctionRequestView['user_name'] }}</div>
             </div>
-
-            @php
-                $workDate = \Carbon\Carbon::parse($correctionRequest->attendance->work_date);
-            @endphp
 
             <div class="detail-row">
                 <div class="detail-label">日付</div>
-                <div class="detail-input-row">
-                    <span class="inline-block w-28">{{ $workDate->format('Y年') }}</span>
-                    <span class="inline-block w-28">{{ $workDate->format('n月 j日') }}</span>
+                <div class="detail-input-row detail-date-row">
+                    <span>{{ $correctionRequestView['work_year'] }}</span>
+                    <span>{{ $correctionRequestView['work_date'] }}</span>
                 </div>
             </div>
 
             <div class="detail-row">
                 <div class="detail-label">出勤・退勤</div>
-                <div class="detail-input-row">
-                    <span class="inline-block w-28">{{ $correctionRequest->requested_clock_in_at ? \Carbon\Carbon::parse($correctionRequest->requested_clock_in_at)->format('H:i') : '' }}</span>
-                    <span>〜</span>
-                    <span class="inline-block w-28">{{ $correctionRequest->requested_clock_out_at ? \Carbon\Carbon::parse($correctionRequest->requested_clock_out_at)->format('H:i') : '' }}</span>
+                <div class="detail-input-row detail-time-row">
+                    <span>{{ $correctionRequestView['clock_in'] }}</span>
+                    <span class="time-separator">〜</span>
+                    <span>{{ $correctionRequestView['clock_out'] }}</span>
                 </div>
             </div>
 
-            @php
-                $requestBreakRows = $correctionRequest->correctionRequestBreaks->values();
-                $breakRowCount = max(2, $requestBreakRows->count());
-            @endphp
-
-            @for ($index = 0; $index < $breakRowCount; $index++)
-                @php
-                    $requestBreak = $requestBreakRows->get($index);
-                @endphp
-
+            @foreach ($correctionRequestView['break_rows'] as $index => $breakRow)
                 <div class="detail-row">
                     <div class="detail-label">休憩{{ $index + 1 }}</div>
-                    <div class="detail-input-row">
-                        <span class="inline-block w-28">{{ $requestBreak?->requested_break_start_at ? \Carbon\Carbon::parse($requestBreak->requested_break_start_at)->format('H:i') : '' }}</span>
-                        <span>〜</span>
-                        <span class="inline-block w-28">{{ $requestBreak?->requested_break_end_at ? \Carbon\Carbon::parse($requestBreak->requested_break_end_at)->format('H:i') : '' }}</span>
+                    <div class="detail-input-row detail-time-row">
+                        <span>{{ $breakRow['start'] }}</span>
+                        <span class="time-separator">〜</span>
+                        <span>{{ $breakRow['end'] }}</span>
                     </div>
                 </div>
-            @endfor
+            @endforeach
 
             <div class="detail-row">
                 <div class="detail-label">備考</div>
-                <div class="detail-value">{{ $correctionRequest->requested_note }}</div>
+                <div class="detail-value">{{ $correctionRequestView['note'] }}</div>
             </div>
 
         </div>
 
         <div class="mt-8 text-right">
-            @if ($correctionRequest->status === 'pending')
-                <form method="POST" action="/stamp_correction_request/approve/{{ $correctionRequest->id }}">
+            @if ($correctionRequestView['status'] === 'pending')
+                <form method="POST" action="{{ route('admin.correction_requests.approve', ['attendance_correct_request_id' => $correctionRequestView['id']]) }}">
                     @csrf
                     <button type="submit" class="btn-action">承認</button>
                 </form>

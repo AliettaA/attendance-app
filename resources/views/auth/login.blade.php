@@ -7,8 +7,9 @@
         <div class="auth-panel">
             <h1 class="auth-title">ログイン</h1>
 
-            <form method="POST" action="/login" class="auth-form">
+            <form method="POST" action="{{ route('login') }}" class="auth-form">
                 @csrf
+                <input type="hidden" name="login_type" value="user">
 
                 <div class="form-group">
                     <label for="email" class="form-label">メールアドレス</label>
@@ -33,7 +34,7 @@
                 <button type="submit" class="auth-submit">ログインする</button>
             </form>
 
-            <a href="/register" class="auth-link">会員登録はこちら</a>
+            <a href="{{ route('register') }}" class="auth-link">会員登録はこちら</a>
         </div>
     </div>
 @endsection

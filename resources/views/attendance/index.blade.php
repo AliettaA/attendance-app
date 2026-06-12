@@ -36,23 +36,23 @@
 
                     <div class="flex flex-wrap items-center justify-center gap-4">
                         @if (is_null($attendance))
-                            <form method="POST" action="/attendance/clock-in">
+                            <form method="POST" action="{{ route('attendance.clock_in') }}">
                                 @csrf
                                 <button type="submit" class="btn-primary">出勤</button>
                             </form>
                         @elseif ($status === 'working')
-                            <form method="POST" action="/attendance/clock-out">
+                            <form method="POST" action="{{ route('attendance.clock_out') }}">
                                 @csrf
                                 <button type="submit" class="btn-primary">退勤</button>
                             </form>
 
-                            <form method="POST" action="/attendance/break-start">
+                            <form method="POST" action="{{ route('attendance.break_start') }}">
                                 @csrf
                                 <button type="submit" class="btn-primary-white">休憩入</button>
                             </form>
 
                         @elseif ($status === 'on_break')
-                            <form method="POST" action="/attendance/break-end">
+                            <form method="POST" action="{{ route('attendance.break_end') }}">
                                 @csrf
                                 <button type="submit" class="btn-primary-white">休憩戻</button>
                             </form>

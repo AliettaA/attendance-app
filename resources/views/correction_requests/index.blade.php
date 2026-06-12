@@ -6,13 +6,13 @@
     <div class="page-container">
         <h1 class="page-title mb-8">申請一覧</h1>
 
-        <div class="mb-6 flex border-b border-gray-300">
-            <a href="/stamp_correction_request/list?status=pending"
-                class="px-8 py-3 text-sm font-semibold {{ $status === 'pending' ? 'border-b-2 border-black text-black' : 'text-gray-500' }}">
+        <div class="mb-6 flex border-b border-black">
+            <a href="{{ route('correction_requests.index', ['status' => 'pending']) }}"
+                class="px-8 py-3 text-[16px] {{ $status === 'pending' ? 'font-semibold  text-black' : 'text-gray-700' }}">
                 承認待ち
             </a>
-            <a href="/stamp_correction_request/list?status=approved"
-                class="px-8 py-3 text-sm font-semibold {{ $status === 'approved' ? 'border-b-2 border-black text-black' : 'text-gray-500' }}">
+            <a href="{{ route('correction_requests.index', ['status' => 'approved']) }}"
+                class="px-8 py-3 text-[16px] {{ $status === 'approved' ? 'font-semibold text-black' : 'text-gray-700' }}">
                 承認済み
             </a>
         </div>
@@ -23,7 +23,7 @@
                     <tr>
                         <th class="px-4 py-3 text-left">状態</th>
                         <th class="px-4 py-3 text-left">名前</th>
-                        <th class="px-4 py-3 text-left">対象日</th>
+                        <th class="px-4 py-3 text-left">対象日時</th>
                         <th class="px-4 py-3 text-left">申請理由</th>
                         <th class="px-4 py-3 text-left">申請日時</th>
                         <th class="px-4 py-3 text-left">詳細</th>
@@ -42,7 +42,7 @@
                             <td>{{ $correctionRequest->requested_note }}</td>
                             <td>{{ $correctionRequest->created_at->format('Y/m/d') }}</td>
                             <td>
-                                <a href="{{ auth()->user()->role === 'admin' ? '/stamp_correction_request/approve/' . $correctionRequest->id : '/attendance/detail/' . $correctionRequest->attendance_id }}" class="font-bold text-black">
+                                <a href="{{ auth()->user()->role === 'admin' ? route('admin.correction_requests.show', ['attendance_correct_request_id' => $correctionRequest->id]) : route('attendance.detail.show', ['id' => $correctionRequest->attendance_id]) }}" class="font-bold text-black">
                                     詳細
                                 </a>
                             </td>
