@@ -53,38 +53,29 @@
                     </div>
                 </div>
 
-                @php
-                    $breakRows = $attendance->breakTimes->values();
-                    $breakInputCount = $breakRows->count() + 1;
-                @endphp
-
-                @for ($index = 0; $index < $breakInputCount; $index++)
-                    @php
-                        $breakTime = $breakRows->get($index);
-                    @endphp
-
+                @foreach ($breakInputRows as $breakRow)
                     <div class="detail-row">
                         <div class="detail-label">
-                            休憩{{ $index + 1 }}
+                            {{ $breakRow['label'] }}
                         </div>
                         <div class="detail-input-row detail-time-row">
-                            <input type="hidden" name="breaks[{{ $index }}][original_break_time_id]"
-                                value="{{ old('breaks.' . $index . '.original_break_time_id', $breakTime?->id) }}">
-                            <input type="time" name="breaks[{{ $index }}][start]"
-                                value="{{ old('breaks.' . $index . '.start', $breakTime?->break_start_at ? \Carbon\Carbon::parse($breakTime->break_start_at)->format('H:i') : '') }}"
+                            <input type="hidden" name="breaks[{{ $breakRow['index'] }}][original_break_time_id]"
+                                value="{{ old('breaks.' . $breakRow['index'] . '.original_break_time_id', $breakRow['original_break_time_id']) }}">
+                            <input type="time" name="breaks[{{ $breakRow['index'] }}][start]"
+                                value="{{ old('breaks.' . $breakRow['index'] . '.start', $breakRow['start']) }}"
                                 class="time-input" @disabled($pendingCorrectionRequest)>
                             <span class="time-separator">〜</span>
-                            <input type="time" name="breaks[{{ $index }}][end]"
-                                value="{{ old('breaks.' . $index . '.end', $breakTime?->break_end_at ? \Carbon\Carbon::parse($breakTime->break_end_at)->format('H:i') : '') }}"
+                            <input type="time" name="breaks[{{ $breakRow['index'] }}][end]"
+                                value="{{ old('breaks.' . $breakRow['index'] . '.end', $breakRow['end']) }}"
                                 class="time-input" @disabled($pendingCorrectionRequest)>
                             <p class="detail-error">
-                                @error('breaks.' . $index . '.start')
+                                @error('breaks.' . $breakRow['index'] . '.start')
                                     {{ $message }}
                                 @enderror
-                                @error('breaks.' . $index . '.end')
+                                @error('breaks.' . $breakRow['index'] . '.end')
                                     {{ $message }}
                                 @enderror
-                                @if ($index === $breakInputCount - 1)
+                                @if ($breakRow['is_last'])
                                     @error('breaks')
                                         {{ $message }}
                                     @enderror
@@ -92,12 +83,12 @@
                             </p>
                         </div>
                     </div>
-                @endfor
+                @endforeach
 
                 <div class="detail-row">
                     <div class="detail-label">備考</div>
-                    <div class="detail-value">
-                        <textarea name="note" rows="4" class="w-full rounded border px-3 py-2 font-bold text-black"
+                    <div class="detail-value detail-note-value">
+                        <textarea name="note" rows="3" class="detail-note-input"
                             @disabled($pendingCorrectionRequest)>{{ old('note', $attendance->note) }}</textarea>
                         <p class="detail-error">
                             @error('note')

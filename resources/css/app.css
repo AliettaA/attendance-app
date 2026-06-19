@@ -201,18 +201,24 @@
     }
 
     .detail-value {
-        @apply px-10 py-5 text-[16px] font-bold text-black;
-        padding-left: 90px;
+        @apply flex items-center px-10 py-3 text-[16px] font-bold text-black;
+    }
+
+    .detail-note-value {
+        @apply items-start;
     }
 
     .detail-input-row {
-        @apply flex flex-wrap items-center gap-4 px-10 py-5 text-[16px] font-bold text-black;
+        @apply flex flex-wrap items-center gap-4 px-10 py-3 text-[16px] font-bold text-black;
     }
 
     .detail-date-row,
     .detail-time-row {
+        --detail-time-width: 120px;
+        --detail-separator-width: 72px;
+        --detail-time-group-width: calc((var(--detail-time-width) * 2) + var(--detail-separator-width));
         @apply grid items-center gap-0;
-        grid-template-columns: 120px 72px 120px;
+        grid-template-columns: var(--detail-time-width) var(--detail-separator-width) var(--detail-time-width);
     }
 
     .detail-date-row > span:first-child {
@@ -226,7 +232,7 @@
     .detail-date-row > span,
     .detail-time-row > input,
     .detail-time-row > span:not(.time-separator) {
-        @apply justify-self-center;
+        @apply justify-self-start;
     }
 
     .detail-error {
@@ -238,11 +244,16 @@
     }
 
     .detail-display-value {
-        @apply inline-flex min-h-[42px] items-center;
+        @apply inline-flex min-h-[34px] items-center;
     }
 
     .detail-display-note {
-        @apply min-h-[84px] whitespace-pre-wrap py-2;
+        @apply min-h-[60px] whitespace-pre-wrap py-2;
+    }
+
+    .detail-note-input {
+        width: calc(330px * 2);
+        @apply h-[72px] max-w-full rounded border px-3 py-2 font-bold text-black;
     }
 
     .time-separator {
@@ -250,7 +261,7 @@
     }
 
     .time-input {
-        @apply w-28 rounded border px-3 py-2 font-bold text-black;
+        @apply h-8 w-28 rounded border px-3 py-1 font-bold text-black;
         appearance: textfield;
     }
 

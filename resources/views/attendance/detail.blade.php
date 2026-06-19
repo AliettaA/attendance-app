@@ -64,47 +64,34 @@
                     </div>
                 </div>
 
-                @php
-                    $breakRows = $attendance->breakTimes->values();
-                    $pendingBreakRows = $pendingCorrectionRequest?->correctionRequestBreaks?->values() ?? collect();
-                    $breakInputCount = max($breakRows->count(), $pendingBreakRows->count()) + 1;
-                @endphp
-
-                @for ($index = 0; $index < $breakInputCount; $index++)
-                    @php
-                        $breakTime = $breakRows->get($index);
-                        $pendingBreakTime = $pendingBreakRows->get($index);
-                        $displayBreakStartAt = $pendingBreakTime?->requested_break_start_at ?? $breakTime?->break_start_at;
-                        $displayBreakEndAt = $pendingBreakTime?->requested_break_end_at ?? $breakTime?->break_end_at;
-                    @endphp
-
+                @foreach ($breakInputRows as $breakRow)
                     <div class="detail-row">
                         <div class="detail-label">
-                            休憩{{ $index + 1 }}
+                            {{ $breakRow['label'] }}
                         </div>
                         <div class="detail-input-row detail-time-row">
                             @if ($pendingCorrectionRequest)
-                                <span class="detail-display-value">{{ $displayBreakStartAt ? \Carbon\Carbon::parse($displayBreakStartAt)->format('H:i') : '' }}</span>
+                                <span class="detail-display-value">{{ $breakRow['start'] }}</span>
                                 <span class="time-separator">〜</span>
-                                <span class="detail-display-value">{{ $displayBreakEndAt ? \Carbon\Carbon::parse($displayBreakEndAt)->format('H:i') : '' }}</span>
+                                <span class="detail-display-value">{{ $breakRow['end'] }}</span>
                             @else
-                                <input type="hidden" name="breaks[{{ $index }}][original_break_time_id]"
-                                    value="{{ old('breaks.' . $index . '.original_break_time_id', $breakTime?->id) }}">
-                                <input type="time" name="breaks[{{ $index }}][start]"
-                                    value="{{ old('breaks.' . $index . '.start', $displayBreakStartAt ? \Carbon\Carbon::parse($displayBreakStartAt)->format('H:i') : '') }}"
+                                <input type="hidden" name="breaks[{{ $breakRow['index'] }}][original_break_time_id]"
+                                    value="{{ old('breaks.' . $breakRow['index'] . '.original_break_time_id', $breakRow['original_break_time_id']) }}">
+                                <input type="time" name="breaks[{{ $breakRow['index'] }}][start]"
+                                    value="{{ old('breaks.' . $breakRow['index'] . '.start', $breakRow['start']) }}"
                                     class="time-input">
                                 <span class="time-separator">〜</span>
-                                <input type="time" name="breaks[{{ $index }}][end]"
-                                    value="{{ old('breaks.' . $index . '.end', $displayBreakEndAt ? \Carbon\Carbon::parse($displayBreakEndAt)->format('H:i') : '') }}"
+                                <input type="time" name="breaks[{{ $breakRow['index'] }}][end]"
+                                    value="{{ old('breaks.' . $breakRow['index'] . '.end', $breakRow['end']) }}"
                                     class="time-input">
                                 <p class="detail-error">
-                                    @error('breaks.' . $index . '.start')
+                                    @error('breaks.' . $breakRow['index'] . '.start')
                                         {{ $message }}
                                     @enderror
-                                    @error('breaks.' . $index . '.end')
+                                    @error('breaks.' . $breakRow['index'] . '.end')
                                         {{ $message }}
                                     @enderror
-                                    @if ($index === $breakInputCount - 1)
+                                    @if ($breakRow['is_last'])
                                         @error('breaks')
                                             {{ $message }}
                                         @enderror
@@ -113,15 +100,15 @@
                             @endif
                         </div>
                     </div>
-                @endfor
+                @endforeach
 
                 <div class="detail-row">
                     <div class="detail-label">備考</div>
-                    <div class="detail-value">
+                    <div class="detail-value detail-note-value">
                         @if ($pendingCorrectionRequest)
                             <div class="detail-display-note">{{ $pendingCorrectionRequest?->requested_note ?? $attendance->note }}</div>
                         @else
-                            <textarea name="note" rows="4" class="w-full rounded border font-bold text-black">{{ old('note', $attendance->note) }}</textarea>
+                            <textarea name="note" rows="3" class="detail-note-input">{{ old('note', $attendance->note) }}</textarea>
                             <p class="detail-error">
                                 @error('note')
                                     {{ $message }}

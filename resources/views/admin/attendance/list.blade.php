@@ -29,7 +29,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($attendanceRows as $row)
+                    @foreach ($attendanceRows as $row)
                         <tr>
                             <td>{{ $row['name'] }}</td>
                             <td>{{ $row['clock_in'] }}</td>
@@ -42,11 +42,7 @@
                                 @endif
                             </td>
                         </tr>
-                    @empty
-                        <tr>
-                            <td colspan="6" class="text-center text-gray-500">勤怠データがありません。</td>
-                        </tr>
-                    @endforelse
+                    @endforeach
                 </tbody>
             </table>
         </div>

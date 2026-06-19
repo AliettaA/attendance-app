@@ -5,13 +5,17 @@ namespace App\Http\Controllers\Attendance;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AttendanceCorrectionRequest;
 use App\Models\Attendance;
-use App\Services\AttendanceService;
+use App\Services\Attendance\CorrectionService;
+use App\Services\Attendance\DetailViewService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class DetailController extends Controller
 {
-    public function __construct(private AttendanceService $attendanceService) {}
+    public function __construct(
+        private CorrectionService $correctionService,
+        private DetailViewService $detailViewService
+    ) {}
 
     public function createByDate(Request $request)
     {
@@ -33,8 +37,9 @@ class DetailController extends Controller
         $attendance->setRelation('breakTimes', collect());
         $attendance->setRelation('correctionRequests', collect());
         $pendingCorrectionRequest = null;
+        $breakInputRows = $this->detailViewService->createBreakRows($attendance, $pendingCorrectionRequest);
 
-        return view('attendance.detail', compact('attendance', 'pendingCorrectionRequest'));
+        return view('attendance.detail', compact('attendance', 'pendingCorrectionRequest', 'breakInputRows'));
     }
 
     public function show(Request $request, $id)
@@ -47,8 +52,9 @@ class DetailController extends Controller
             ->where('status', 'pending')
             ->sortByDesc('created_at')
             ->first();
+        $breakInputRows = $this->detailViewService->createBreakRows($attendance, $pendingCorrectionRequest);
 
-        return view('attendance.detail', compact('attendance', 'pendingCorrectionRequest'));
+        return view('attendance.detail', compact('attendance', 'pendingCorrectionRequest', 'breakInputRows'));
     }
 
     public function storeCorrectionRequest(AttendanceCorrectionRequest $request, $id)
@@ -56,12 +62,12 @@ class DetailController extends Controller
         $attendance = Attendance::where('user_id', $request->user()->id)
             ->with(['breakTimes', 'correctionRequests'])
             ->findOrFail($id);
-        if ($this->attendanceService->hasPendingCorrectionRequest($attendance)) {
+        if ($this->correctionService->hasPendingCorrectionRequest($attendance)) {
             return redirect()->route('attendance.detail.show', ['id' => $attendance->id]);
         }
 
         $workDate = Carbon::parse($attendance->work_date)->toDateString();
-        $this->attendanceService->createCorrectionRequest(
+        $this->correctionService->createCorrectionRequest(
             $attendance,
             $request->user(),
             $request->validated(),
@@ -87,11 +93,11 @@ class DetailController extends Controller
             ]
         );
 
-        if ($this->attendanceService->hasPendingCorrectionRequest($attendance)) {
+        if ($this->correctionService->hasPendingCorrectionRequest($attendance)) {
             return redirect()->route('attendance.detail.show', ['id' => $attendance->id]);
         }
 
-        $this->attendanceService->createCorrectionRequest(
+        $this->correctionService->createCorrectionRequest(
             $attendance,
             $request->user(),
             $validated,

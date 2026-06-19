@@ -7,7 +7,8 @@ use App\Http\Requests\AttendanceCorrectionRequest;
 use App\Models\Attendance;
 use App\Models\BreakTime;
 use App\Models\User;
-use App\Services\AttendanceService;
+use App\Services\Attendance\DetailViewService;
+use App\Services\Attendance\SummaryService;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
@@ -15,7 +16,10 @@ use Illuminate\Support\Facades\DB;
 
 class AttendanceController extends Controller
 {
-    public function __construct(private AttendanceService $attendanceService) {}
+    public function __construct(
+        private DetailViewService $detailViewService,
+        private SummaryService $summaryService
+    ) {}
 
     public function index(Request $request)
     {
@@ -37,7 +41,7 @@ class AttendanceController extends Controller
             return array_merge([
                 'name' => $user->name,
                 'detail_url' => $attendance ? route('admin.attendance.show', ['id' => $attendance->id]) : null,
-            ], $this->attendanceService->attendanceSummary($attendance));
+            ], $this->summaryService->attendanceSummary($attendance));
         });
 
         $previousDate = $date->copy()->subDay()->toDateString();
@@ -53,8 +57,9 @@ class AttendanceController extends Controller
         $pendingCorrectionRequest = $attendance->correctionRequests
             ->where('status', 'pending')
             ->first();
+        $breakInputRows = $this->detailViewService->createBreakRows($attendance, $pendingCorrectionRequest);
 
-        return view('admin.attendance.detail', compact('attendance', 'pendingCorrectionRequest'));
+        return view('admin.attendance.detail', compact('attendance', 'pendingCorrectionRequest', 'breakInputRows'));
     }
 
     public function createForStaffDate(Request $request, $id)
@@ -78,8 +83,9 @@ class AttendanceController extends Controller
         $attendance->setRelation('breakTimes', collect());
         $attendance->setRelation('correctionRequests', collect());
         $pendingCorrectionRequest = null;
+        $breakInputRows = $this->detailViewService->createBreakRows($attendance, $pendingCorrectionRequest);
 
-        return view('admin.attendance.detail', compact('attendance', 'pendingCorrectionRequest'));
+        return view('admin.attendance.detail', compact('attendance', 'pendingCorrectionRequest', 'breakInputRows'));
     }
 
     public function update(AttendanceCorrectionRequest $request, $id)
@@ -203,7 +209,7 @@ class AttendanceController extends Controller
                 'detail_url' => $attendance
                     ? route('admin.attendance.show', ['id' => $attendance->id])
                     : route('admin.attendance.staff.detail.create', ['id' => $user->id, 'date' => $date->toDateString()]),
-            ], $this->attendanceService->attendanceSummary($attendance));
+            ], $this->summaryService->attendanceSummary($attendance));
         });
 
         $previousMonth = $month->copy()->subMonth()->format('Y-m');
@@ -249,7 +255,7 @@ class AttendanceController extends Controller
                     continue;
                 }
 
-                $summary = $this->attendanceService->attendanceSummary($attendance);
+                $summary = $this->summaryService->attendanceSummary($attendance);
 
                 fputcsv($handle, [
                     Carbon::parse($attendance->work_date)->format('Y/m/d'),
