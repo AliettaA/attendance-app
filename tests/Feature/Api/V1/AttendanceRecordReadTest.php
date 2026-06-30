@@ -75,8 +75,8 @@ class AttendanceRecordReadTest extends TestCase
         $response->assertOk();
         $response->assertJsonPath('data.id', $attendance->id);
         $response->assertJsonPath('data.user.name', '山田太郎');
-        $response->assertJsonPath('data.breaks.0.break_start', '12:00:00');
-        $response->assertJsonPath('data.correction_requests.0.status', 'pending');
+        $response->assertJsonPath('data.breaks.0.break_in', '12:00:00');
+        $response->assertJsonPath('data.applications.0.status', 'pending');
     }
 
     public function test_not_found_error_is_returned_when_attendance_record_does_not_exist(): void

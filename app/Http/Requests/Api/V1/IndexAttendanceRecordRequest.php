@@ -26,7 +26,7 @@ class IndexAttendanceRecordRequest extends FormRequest
     }
     public function messages(): array
     {
-        return [    
+        return [
         'user_id.integer' => 'ユーザーIDは整数で指定してください。',
         'user_id.exists' => '指定されたユーザーが見つかりません。',
         'date.date_format' => '日付は YYYY-MM-DD 形式で指定してください。',

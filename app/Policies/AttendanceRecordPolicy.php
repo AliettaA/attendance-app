@@ -4,10 +4,18 @@ namespace App\Policies;
 
 use App\Models\Attendance;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class AttendanceRecordPolicy
 {
+    public function before(User $user, string $ability): ?bool
+    {
+        if ($user->role === 'admin') {
+            return true;
+        }
+
+        return null;
+    }
+
     /**
      * Determine whether the user can view any models.
      */
@@ -37,7 +45,7 @@ class AttendanceRecordPolicy
      */
     public function update(User $user, Attendance $attendance): bool
     {
-        return $user->role === 'admin' || $user->id === $attendance->user_id;
+        return $user->id === $attendance->user_id;
     }
 
     /**
@@ -45,7 +53,7 @@ class AttendanceRecordPolicy
      */
     public function delete(User $user, Attendance $attendance): bool
     {
-        return $user->role === 'admin' || $user->id === $attendance->user_id;
+        return $user->id === $attendance->user_id;
     }
 
     /**

@@ -26,7 +26,6 @@ class AttendanceRecordAuthTest extends TestCase
         ]);
 
         $postResponse = $this->postJson('/api/v1/attendance-records', [
-            'user_id' => $user->id,
             'date' => '2026-06-25',
             'clock_in' => '09:00:00',
             'clock_out' => '18:00:00',
@@ -34,7 +33,6 @@ class AttendanceRecordAuthTest extends TestCase
         ]);
 
         $putResponse = $this->putJson("/api/v1/attendance-records/{$attendance->id}", [
-            'user_id' => $user->id,
             'date' => '2026-06-24',
             'clock_in' => '10:00:00',
             'clock_out' => '19:00:00',
@@ -71,7 +69,6 @@ class AttendanceRecordAuthTest extends TestCase
         ]);
 
         $updateResponse = $this->putJson("/api/v1/attendance-records/{$attendance->id}", [
-            'user_id' => $user->id,
             'date' => '2026-06-24',
             'clock_in' => '10:00:00',
             'clock_out' => '19:00:00',
@@ -114,7 +111,6 @@ class AttendanceRecordAuthTest extends TestCase
         ]);
 
         $updateResponse = $this->putJson("/api/v1/attendance-records/{$attendance->id}", [
-            'user_id' => $owner->id,
             'date' => '2026-06-24',
             'clock_in' => '10:00:00',
             'clock_out' => '19:00:00',

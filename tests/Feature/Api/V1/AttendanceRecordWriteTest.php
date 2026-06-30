@@ -22,7 +22,6 @@ class AttendanceRecordWriteTest extends TestCase
         Sanctum::actingAs($user);
 
         $response = $this->postJson('/api/v1/attendance-records', [
-            'user_id' => $user->id,
             'date' => '2026-06-24',
             'clock_in' => '09:00:00',
             'clock_out' => '18:00:00',
@@ -56,11 +55,9 @@ class AttendanceRecordWriteTest extends TestCase
 
         $response->assertUnprocessable();
         $response->assertJsonValidationErrors([
-            'user_id',
             'date',
             'clock_in',
         ]);
-        $response->assertJsonPath('errors.user_id.0', 'ユーザーIDは必須です。');
         $response->assertJsonPath('errors.date.0', '勤怠日は必須です。');
         $response->assertJsonPath('errors.clock_in.0', '出勤時刻は必須です。');
     }
@@ -84,7 +81,6 @@ class AttendanceRecordWriteTest extends TestCase
         ]);
 
         $response = $this->putJson("/api/v1/attendance-records/{$attendance->id}", [
-            'user_id' => $user->id,
             'date' => '2026-06-24',
             'clock_in' => '10:00:00',
             'clock_out' => '19:00:00',
@@ -113,7 +109,6 @@ class AttendanceRecordWriteTest extends TestCase
         Sanctum::actingAs($user);
 
         $response = $this->putJson('/api/v1/attendance-records/99999', [
-            'user_id' => $user->id,
             'date' => '2026-06-24',
             'clock_in' => '09:00:00',
             'clock_out' => '18:00:00',
