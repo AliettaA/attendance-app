@@ -19,7 +19,7 @@ class ClockOutTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_clock_out_button_works_and_status_becomes_finished(): void
+    public function test_clock_out_finishes_work(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 18:00:00'));
 
@@ -56,7 +56,7 @@ class ClockOutTest extends TestCase
             ->assertSee('退勤済');
     }
 
-    public function test_clock_out_time_is_shown_on_attendance_list(): void
+    public function test_clock_out_time_is_shown_on_list(): void
     {
         $user = User::factory()->create([
             'role' => 'user',

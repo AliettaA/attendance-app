@@ -19,7 +19,7 @@ class StampPageTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_current_date_and_time_are_shown_on_attendance_stamp_page(): void
+    public function test_current_date_and_time_are_shown(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 09:23:00'));
 
@@ -35,7 +35,7 @@ class StampPageTest extends TestCase
         $response->assertSee('09:23');
     }
 
-    public function test_status_is_shown_as_off_duty_when_user_has_no_attendance_today(): void
+    public function test_off_duty_status_is_shown(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 09:00:00'));
 
@@ -50,7 +50,7 @@ class StampPageTest extends TestCase
         $response->assertSee('勤務外');
     }
 
-    public function test_status_is_shown_as_working_when_user_is_working(): void
+    public function test_working_status_is_shown(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 09:00:00'));
 
@@ -72,7 +72,7 @@ class StampPageTest extends TestCase
         $response->assertSee('出勤中');
     }
 
-    public function test_status_is_shown_as_on_break_when_user_is_on_break(): void
+    public function test_on_break_status_is_shown(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 12:00:00'));
 
@@ -94,7 +94,7 @@ class StampPageTest extends TestCase
         $response->assertSee('休憩中');
     }
 
-    public function test_status_is_shown_as_finished_when_user_has_finished_work(): void
+    public function test_finished_status_is_shown(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 18:00:00'));
 

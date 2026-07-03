@@ -20,7 +20,7 @@ class AdminAttendanceListTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_admin_can_see_all_users_attendance_records_for_the_day(): void
+    public function test_daily_records_are_shown(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 09:00:00'));
 
@@ -75,7 +75,7 @@ class AdminAttendanceListTest extends TestCase
         $response->assertSee('9:00');
     }
 
-    public function test_current_date_is_shown_when_admin_opens_attendance_list(): void
+    public function test_current_date_is_shown(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 09:00:00'));
 
@@ -92,7 +92,7 @@ class AdminAttendanceListTest extends TestCase
         $response->assertSee('2026年06月19日');
     }
 
-    public function test_previous_day_attendance_records_are_shown_when_opening_previous_day(): void
+    public function test_previous_day_records_are_shown(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 09:00:00'));
 
@@ -125,7 +125,7 @@ class AdminAttendanceListTest extends TestCase
         $response->assertSee('18:30');
     }
 
-    public function test_next_day_attendance_records_are_shown_when_opening_next_day(): void
+    public function test_next_day_records_are_shown(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 09:00:00'));
 

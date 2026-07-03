@@ -20,7 +20,7 @@ class AdminStaffTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_admin_can_see_all_general_users_names_and_email_addresses(): void
+    public function test_staff_list_is_shown(): void
     {
         $admin = User::factory()->create([
             'role' => 'admin',
@@ -57,7 +57,7 @@ class AdminStaffTest extends TestCase
         $response->assertDontSee('admin-only@example.com');
     }
 
-    public function test_admin_can_see_selected_staff_attendance_records(): void
+    public function test_staff_records_are_shown(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 09:00:00'));
 
@@ -96,7 +96,7 @@ class AdminStaffTest extends TestCase
         $response->assertSee('8:00');
     }
 
-    public function test_previous_month_staff_attendance_records_are_shown(): void
+    public function test_previous_month_records_are_shown(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 09:00:00'));
 
@@ -128,7 +128,7 @@ class AdminStaffTest extends TestCase
         $response->assertSee('18:30');
     }
 
-    public function test_next_month_staff_attendance_records_are_shown(): void
+    public function test_next_month_records_are_shown(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 09:00:00'));
 
@@ -160,7 +160,7 @@ class AdminStaffTest extends TestCase
         $response->assertSee('17:45');
     }
 
-    public function test_admin_can_open_attendance_detail_from_staff_attendance_list(): void
+    public function test_detail_link_opens_detail(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 09:00:00'));
 

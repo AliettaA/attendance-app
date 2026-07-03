@@ -19,7 +19,7 @@ class ClockInTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_clock_in_button_works_and_status_becomes_working(): void
+    public function test_clock_in_starts_work(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 09:00:00'));
 
@@ -50,7 +50,7 @@ class ClockInTest extends TestCase
             ->assertSee('出勤中');
     }
 
-    public function test_clock_in_button_is_not_shown_after_user_has_finished_work_today(): void
+    public function test_clock_in_button_is_hidden_after_finished(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 18:00:00'));
 
@@ -74,7 +74,7 @@ class ClockInTest extends TestCase
             ->assertDontSee('出勤');
     }
 
-    public function test_clock_in_time_is_shown_on_attendance_list(): void
+    public function test_clock_in_time_is_shown_on_list(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 09:00:00'));
 

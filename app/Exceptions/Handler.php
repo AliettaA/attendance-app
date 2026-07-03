@@ -9,7 +9,6 @@ use Throwable;
 
 class Handler extends ExceptionHandler
 {
- 
     protected $dontFlash = [
         'current_password',
         'password',
@@ -17,21 +16,22 @@ class Handler extends ExceptionHandler
     ];
 
     public function render($request, Throwable $e)
-{
-    if ($request->is('api/*') && $e instanceof ModelNotFoundException) {
-        return response()->json([
-            'error' => '勤怠情報が見つかりませんでした。',
-        ], 404);
+    {
+        if ($request->is('api/*') && $e instanceof ModelNotFoundException) {
+            return response()->json([
+                'error' => '勤怠情報が見つかりませんでした。',
+            ], 404);
+        }
+
+        if ($request->is('api/*') && $e instanceof AuthorizationException) {
+            return response()->json([
+                'error' => 'この操作を実行する権限がありません。',
+            ], 403);
+        }
+
+        return parent::render($request, $e);
     }
 
-    if ($request->is('api/*') && $e instanceof AuthorizationException) {
-        return response()->json([
-            'error' => 'この操作を実行する権限がありません。',
-        ], 403);
-    }
-
-    return parent::render($request, $e);
-}
     public function register(): void
     {
         $this->reportable(function (Throwable $e) {

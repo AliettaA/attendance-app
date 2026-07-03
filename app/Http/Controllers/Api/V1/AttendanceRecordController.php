@@ -17,7 +17,7 @@ class AttendanceRecordController extends Controller
      */
     public function index(IndexAttendanceRecordRequest $request)
     {
-        $query = Attendance::with(['user'])
+        $query = Attendance::with(['user', 'breakTimes'])
             ->when($request->filled('user_id'), function ($query) use ($request) {
                 $query->where('user_id', $request->input('user_id'));
             })

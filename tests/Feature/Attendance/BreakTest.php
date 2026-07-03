@@ -20,7 +20,7 @@ class BreakTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_break_start_button_works_and_status_becomes_on_break(): void
+    public function test_break_start_sets_on_break(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 12:00:00'));
 
@@ -51,7 +51,7 @@ class BreakTest extends TestCase
             ->assertSee('休憩中');
     }
 
-    public function test_break_can_be_started_multiple_times_in_one_day(): void
+    public function test_break_can_start_again(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 12:00:00'));
 
@@ -73,7 +73,7 @@ class BreakTest extends TestCase
             ->assertSee('休憩入');
     }
 
-    public function test_break_end_button_works_and_status_becomes_working(): void
+    public function test_break_end_sets_working(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 12:00:00'));
 
@@ -108,7 +108,7 @@ class BreakTest extends TestCase
             ->assertSee('出勤中');
     }
 
-    public function test_break_end_can_be_used_multiple_times_in_one_day(): void
+    public function test_break_end_can_be_used_again(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 12:00:00'));
 
@@ -133,7 +133,7 @@ class BreakTest extends TestCase
             ->assertSee('休憩戻');
     }
 
-    public function test_break_time_is_shown_on_attendance_list(): void
+    public function test_break_time_is_shown_on_list(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 09:00:00'));
 

@@ -19,7 +19,7 @@ class AttendanceListTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_user_attendance_records_are_shown_on_attendance_list(): void
+    public function test_user_records_are_shown(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 09:00:00'));
 
@@ -45,7 +45,7 @@ class AttendanceListTest extends TestCase
         $response->assertSee('18:00');
     }
 
-    public function test_current_month_is_shown_when_opening_attendance_list(): void
+    public function test_current_month_is_shown(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 09:00:00'));
 
@@ -61,7 +61,7 @@ class AttendanceListTest extends TestCase
         $response->assertSee('2026年06月');
     }
 
-    public function test_previous_month_attendance_records_are_shown_when_opening_previous_month(): void
+    public function test_previous_month_records_are_shown(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 09:00:00'));
 
@@ -88,7 +88,7 @@ class AttendanceListTest extends TestCase
         $response->assertSee('18:00');
     }
 
-    public function test_next_month_attendance_records_are_shown_when_opening_next_month(): void
+    public function test_next_month_records_are_shown(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 09:00:00'));
 
@@ -115,7 +115,7 @@ class AttendanceListTest extends TestCase
         $response->assertSee('18:00');
     }
 
-    public function test_user_can_open_attendance_detail_from_attendance_list(): void
+    public function test_detail_link_opens_detail(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 09:00:00'));
 

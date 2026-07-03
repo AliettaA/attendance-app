@@ -13,7 +13,7 @@ class EmailVerificationTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_verification_email_is_sent_after_registration(): void
+    public function test_registration_sends_verification_email(): void
     {
         Notification::fake();
 
@@ -31,7 +31,7 @@ class EmailVerificationTest extends TestCase
         Notification::assertSentTo($user, VerifyEmail::class);
     }
 
-    public function test_verification_notice_page_has_link_to_mailhog(): void
+    public function test_notice_page_has_mailhog_link(): void
     {
         $user = User::factory()->unverified()->create([
             'role' => 'user',
@@ -44,7 +44,22 @@ class EmailVerificationTest extends TestCase
             ->assertSee('http://localhost:8025', false);
     }
 
-    public function test_user_is_redirected_to_attendance_page_after_email_verification(): void
+    public function test_verification_email_can_be_resent(): void
+    {
+        Notification::fake();
+
+        $user = User::factory()->unverified()->create([
+            'role' => 'user',
+        ]);
+
+        $this->actingAs($user)
+            ->post(route('verification.send'))
+            ->assertRedirect();
+
+        Notification::assertSentTo($user, VerifyEmail::class);
+    }
+
+    public function test_verified_user_is_redirected_to_attendance_page(): void
     {
         $user = User::factory()->unverified()->create([
             'role' => 'user',

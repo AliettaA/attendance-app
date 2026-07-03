@@ -22,7 +22,7 @@ class AdminCorrectionRequestTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_admin_can_see_all_pending_correction_requests(): void
+    public function test_pending_requests_are_shown(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 10:00:00'));
 
@@ -45,7 +45,7 @@ class AdminCorrectionRequestTest extends TestCase
             ->assertDontSee('承認済みの申請');
     }
 
-    public function test_admin_can_see_all_approved_correction_requests(): void
+    public function test_approved_requests_are_shown(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 10:00:00'));
 
@@ -68,7 +68,7 @@ class AdminCorrectionRequestTest extends TestCase
             ->assertDontSee('承認待ちの申請');
     }
 
-    public function test_admin_can_see_correction_request_detail(): void
+    public function test_detail_shows_request(): void
     {
         $admin = User::factory()->create(['role' => 'admin', 'email_verified_at' => now()]);
         $user = User::factory()->create(['name' => '山田太郎', 'role' => 'user', 'email_verified_at' => now()]);
@@ -88,7 +88,7 @@ class AdminCorrectionRequestTest extends TestCase
             ->assertSee('電車遅延のため');
     }
 
-    public function test_admin_can_approve_correction_request_and_attendance_is_updated(): void
+    public function test_approval_updates_attendance(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 10:00:00'));
 

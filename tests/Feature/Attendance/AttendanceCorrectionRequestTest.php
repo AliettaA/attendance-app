@@ -22,7 +22,7 @@ class AttendanceCorrectionRequestTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_error_is_shown_when_clock_in_time_is_after_clock_out_time(): void
+    public function test_rejects_clock_in_after_clock_out(): void
     {
         [$user, $attendance, $breakTime] = $this->createAttendanceWithBreak();
 
@@ -45,7 +45,7 @@ class AttendanceCorrectionRequestTest extends TestCase
         ]);
     }
 
-    public function test_error_is_shown_when_break_start_time_is_after_clock_out_time(): void
+    public function test_rejects_break_start_after_clock_out(): void
     {
         [$user, $attendance, $breakTime] = $this->createAttendanceWithBreak();
 
@@ -68,7 +68,7 @@ class AttendanceCorrectionRequestTest extends TestCase
         ]);
     }
 
-    public function test_error_is_shown_when_break_end_time_is_after_clock_out_time(): void
+    public function test_rejects_break_end_after_clock_out(): void
     {
         [$user, $attendance, $breakTime] = $this->createAttendanceWithBreak();
 
@@ -91,7 +91,7 @@ class AttendanceCorrectionRequestTest extends TestCase
         ]);
     }
 
-    public function test_error_is_shown_when_note_is_empty(): void
+    public function test_rejects_empty_note(): void
     {
         [$user, $attendance, $breakTime] = $this->createAttendanceWithBreak();
 
@@ -114,7 +114,7 @@ class AttendanceCorrectionRequestTest extends TestCase
         ]);
     }
 
-    public function test_correction_request_is_created_and_shown_to_admin(): void
+    public function test_request_is_created_and_shown_to_admin(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 10:00:00'));
 
@@ -174,7 +174,7 @@ class AttendanceCorrectionRequestTest extends TestCase
             ->assertSee('19:00');
     }
 
-    public function test_user_pending_correction_requests_are_shown_on_request_list(): void
+    public function test_pending_requests_are_shown(): void
     {
         [$user, $attendance] = $this->createAttendanceWithBreak();
 
@@ -196,7 +196,7 @@ class AttendanceCorrectionRequestTest extends TestCase
             ->assertSee('電車遅延のため');
     }
 
-    public function test_user_approved_correction_requests_are_shown_on_request_list(): void
+    public function test_approved_requests_are_shown(): void
     {
         [$user, $attendance, $breakTime] = $this->createAttendanceWithBreak();
         $admin = User::factory()->create([
@@ -233,7 +233,7 @@ class AttendanceCorrectionRequestTest extends TestCase
             ->assertSee('電車遅延のため');
     }
 
-    public function test_user_can_open_attendance_detail_from_correction_request_list(): void
+    public function test_detail_link_opens_detail(): void
     {
         [$user, $attendance] = $this->createAttendanceWithBreak();
 

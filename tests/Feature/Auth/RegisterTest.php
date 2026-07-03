@@ -11,7 +11,7 @@ class RegisterTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_name_is_required_when_registering(): void
+    public function test_name_is_required(): void
     {
         $response = $this->post('/register', [
             'name' => '',
@@ -25,7 +25,7 @@ class RegisterTest extends TestCase
         ]);
     }
 
-    public function test_email_is_required_when_registering(): void
+    public function test_email_is_required(): void
     {
         $response = $this->post('/register', [
             'name' => 'テストユーザー',
@@ -39,7 +39,7 @@ class RegisterTest extends TestCase
         ]);
     }
 
-    public function test_password_must_be_at_least_eight_characters_when_registering(): void
+    public function test_password_must_be_at_least_eight_characters(): void
     {
         $response = $this->post('/register', [
             'name' => 'テストユーザー',
@@ -53,7 +53,7 @@ class RegisterTest extends TestCase
         ]);
     }
 
-    public function test_password_confirmation_must_match_when_registering(): void
+    public function test_password_confirmation_must_match(): void
     {
         $response = $this->post('/register', [
             'name' => 'テストユーザー',
@@ -67,7 +67,7 @@ class RegisterTest extends TestCase
         ]);
     }
 
-    public function test_password_is_required_when_registering(): void
+    public function test_password_is_required(): void
     {
         $response = $this->post('/register', [
             'name' => 'テストユーザー',
@@ -81,7 +81,7 @@ class RegisterTest extends TestCase
         ]);
     }
 
-    public function test_user_is_created_when_registering_with_valid_input(): void
+    public function test_valid_input_creates_user(): void
     {
         $response = $this->post('/register', [
             'name' => 'テストユーザー',

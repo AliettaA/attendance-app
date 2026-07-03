@@ -20,7 +20,7 @@ class AttendanceDetailTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_attendance_detail_shows_login_user_attendance_information(): void
+    public function test_detail_shows_attendance(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 09:00:00'));
 

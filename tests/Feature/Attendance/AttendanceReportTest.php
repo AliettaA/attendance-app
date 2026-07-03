@@ -20,13 +20,13 @@ class AttendanceReportTest extends TestCase
         parent::tearDown();
     }
 
-    public function test_guest_cannot_access_attendance_report_page(): void
+    public function test_guest_is_redirected(): void
     {
         $this->get(route('attendance.report'))
             ->assertRedirect(route('login'));
     }
 
-    public function test_authenticated_user_attendance_report_is_calculated_correctly(): void
+    public function test_report_is_calculated(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 09:00:00'));
 
@@ -101,7 +101,7 @@ class AttendanceReportTest extends TestCase
             ->assertSee('0日');
     }
 
-    public function test_attendance_report_is_shown_safely_when_user_has_no_attendance_records(): void
+    public function test_empty_report_is_shown(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 09:00:00'));
 
