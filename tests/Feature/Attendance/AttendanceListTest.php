@@ -61,6 +61,21 @@ class AttendanceListTest extends TestCase
         $response->assertSee('2026年06月');
     }
 
+    public function test_invalid_month_is_rejected(): void
+    {
+        $user = User::factory()->create([
+            'role' => 'user',
+            'email_verified_at' => now(),
+        ]);
+
+        $response = $this->actingAs($user)
+            ->from(route('attendance.list'))
+            ->get(route('attendance.list', ['month' => 'invalid-month']));
+
+        $response->assertRedirect(route('attendance.list'));
+        $response->assertSessionHasErrors('month');
+    }
+
     public function test_previous_month_records_are_shown(): void
     {
         Carbon::setTestNow(Carbon::parse('2026-06-19 09:00:00'));

@@ -51,7 +51,7 @@ class StampService
     {
         $breakTime = $attendance->breakTimes()
             ->whereNull('break_end_at')
-            ->latest()
+            ->latest('break_start_at')
             ->first();
 
         if ($breakTime) {

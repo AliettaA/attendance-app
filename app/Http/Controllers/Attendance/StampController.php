@@ -4,20 +4,22 @@ namespace App\Http\Controllers\Attendance;
 
 use App\Http\Controllers\Controller;
 use App\Services\Attendance\StampService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class StampController extends Controller
 {
     public function __construct(private StampService $stampService) {}
 
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         $attendance = $this->stampService->getTodayAttendance($request->user());
 
         return view('attendance.index', compact('attendance'));
     }
 
-    public function clockIn(Request $request)
+    public function clockIn(Request $request): RedirectResponse
     {
         $attendance = $this->stampService->getTodayAttendance($request->user());
         if ($attendance) {
@@ -28,7 +30,7 @@ class StampController extends Controller
         return redirect()->route('attendance.index');
     }
 
-    public function clockOut(Request $request)
+    public function clockOut(Request $request): RedirectResponse
     {
         $attendance = $this->stampService->getTodayAttendance($request->user());
         if (! $attendance || $attendance->status !== 'working') {
@@ -39,7 +41,7 @@ class StampController extends Controller
         return redirect()->route('attendance.index');
     }
 
-    public function breakStart(Request $request)
+    public function breakStart(Request $request): RedirectResponse
     {
         $attendance = $this->stampService->getTodayAttendance($request->user());
         if (! $attendance || $attendance->status !== 'working') {
@@ -50,7 +52,7 @@ class StampController extends Controller
         return redirect()->route('attendance.index');
     }
 
-    public function breakEnd(Request $request)
+    public function breakEnd(Request $request): RedirectResponse
     {
         $attendance = $this->stampService->getTodayAttendance($request->user());
         if (! $attendance || $attendance->status !== 'on_break') {
