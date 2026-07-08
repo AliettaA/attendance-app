@@ -64,7 +64,7 @@ class AttendanceCorrectionRequestTest extends TestCase
             ]);
 
         $response->assertSessionHasErrors([
-            'breaks' => '休憩時間が不適切な値です',
+            'breaks.0.start' => '休憩時間が不適切な値です',
         ]);
     }
 
@@ -87,7 +87,7 @@ class AttendanceCorrectionRequestTest extends TestCase
             ]);
 
         $response->assertSessionHasErrors([
-            'breaks' => '休憩時間もしくは退勤時間が不適切な値です',
+            'breaks.0.end' => '休憩時間もしくは退勤時間が不適切な値です',
         ]);
     }
 
@@ -111,6 +111,65 @@ class AttendanceCorrectionRequestTest extends TestCase
 
         $response->assertSessionHasErrors([
             'note' => '備考を記入してください',
+        ]);
+    }
+
+    public function test_rejects_missing_work_date_when_creating_by_date(): void
+    {
+        [$user] = $this->createAttendanceWithBreak();
+
+        $response = $this->actingAs($user)
+            ->post(route('attendance.detail.store_by_date'), [
+                'clock_in_at' => '09:00',
+                'clock_out_at' => '18:00',
+                'breaks' => [
+                    [
+                        'start' => '12:00',
+                        'end' => '13:00',
+                    ],
+                ],
+                'note' => '修正理由',
+            ]);
+
+        $response->assertSessionHasErrors([
+            'work_date' => '日付を入力してください',
+        ]);
+    }
+
+    public function test_rejects_break_time_from_other_attendance(): void
+    {
+        [$user, $attendance] = $this->createAttendanceWithBreak();
+
+        $otherAttendance = Attendance::create([
+            'user_id' => $user->id,
+            'work_date' => '2026-06-06',
+            'clock_in_at' => '2026-06-06 09:00:00',
+            'clock_out_at' => '2026-06-06 18:00:00',
+            'status' => 'finished',
+            'note' => '通常勤務',
+        ]);
+        $otherBreakTime = BreakTime::create([
+            'attendance_id' => $otherAttendance->id,
+            'break_start_at' => '2026-06-06 12:00:00',
+            'break_end_at' => '2026-06-06 13:00:00',
+        ]);
+
+        $response = $this->actingAs($user)
+            ->post(route('attendance.detail.request', ['id' => $attendance->id]), [
+                'clock_in_at' => '09:00',
+                'clock_out_at' => '18:00',
+                'breaks' => [
+                    [
+                        'original_break_time_id' => $otherBreakTime->id,
+                        'start' => '12:00',
+                        'end' => '13:00',
+                    ],
+                ],
+                'note' => '修正理由',
+            ]);
+
+        $response->assertSessionHasErrors([
+            'breaks.0.start' => '休憩時間が不適切な値です',
         ]);
     }
 

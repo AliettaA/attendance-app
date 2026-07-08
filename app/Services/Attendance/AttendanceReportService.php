@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Services;
+namespace App\Services\Attendance;
 
 use App\Models\Attendance;
 use App\Models\User;
-use App\Services\Attendance\SummaryService;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
 use Illuminate\Support\Collection;
@@ -50,7 +49,7 @@ class AttendanceReportService
                     'total_work_time' => $this->summaryService->formatMinutes($report['total_work_minutes'], 'label'),
                     'total_overtime_time' => $this->summaryService->formatMinutes($report['total_overtime_minutes'], 'label'),
                 ]);
-            }),
+            })->all(),
             'anomalies' => $this->buildCurrentMonthAnomalies($attendances, $currentMonth),
             'standards' => [
                 'start_time' => self::STANDARD_START_TIME,

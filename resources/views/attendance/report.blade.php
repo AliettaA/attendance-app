@@ -3,7 +3,7 @@
 @section('title', 'マイ勤怠レポート')
 
 @section('content')
-    <div class="min-h-[calc(100vh-72px)] bg-white">
+    <main class="min-h-[calc(100vh-72px)] bg-white">
         <div class="page-container">
             <div class="mb-5">
                 <h1 class="text-[26px] font-semibold">マイ勤怠レポート</h1>
@@ -34,9 +34,9 @@
                     <table class="data-table report-monthly-table">
                         <thead class="text-sm">
                             <tr>
-                                <th class="px-4 py-3 text-left">月</th>
-                                <th class="px-4 py-3 text-right">労働時間</th>
-                                <th class="px-4 py-3 text-right">残業時間</th>
+                                <th scope="col" class="px-4 py-3 text-left">月</th>
+                                <th scope="col" class="px-4 py-3 text-right">労働時間</th>
+                                <th scope="col" class="px-4 py-3 text-right">残業時間</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -73,5 +73,5 @@
                 </div>
             </section>
         </div>
-    </div>
+    </main>
 @endsection

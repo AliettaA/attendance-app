@@ -8,7 +8,9 @@ use App\Models\Attendance;
 use App\Services\Attendance\CorrectionService;
 use App\Services\Attendance\DetailViewService;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class DetailController extends Controller
 {
@@ -17,7 +19,7 @@ class DetailController extends Controller
         private DetailViewService $detailViewService
     ) {}
 
-    public function createByDate(Request $request)
+    public function createByDate(Request $request): View|RedirectResponse
     {
         $workDate = Carbon::parse($request->query('date', today()->toDateString()))->toDateString();
         $existingAttendance = Attendance::where('user_id', $request->user()->id)
@@ -42,7 +44,7 @@ class DetailController extends Controller
         return view('attendance.detail', compact('attendance', 'pendingCorrectionRequest', 'breakInputRows'));
     }
 
-    public function show(Request $request, $id)
+    public function show(Request $request, $id): View
     {
         $attendance = Attendance::where('user_id', $request->user()->id)
             ->with(['user', 'breakTimes', 'correctionRequests.correctionRequestBreaks'])
@@ -57,7 +59,7 @@ class DetailController extends Controller
         return view('attendance.detail', compact('attendance', 'pendingCorrectionRequest', 'breakInputRows'));
     }
 
-    public function storeCorrectionRequest(AttendanceCorrectionRequest $request, $id)
+    public function storeCorrectionRequest(AttendanceCorrectionRequest $request, $id): RedirectResponse
     {
         $attendance = Attendance::where('user_id', $request->user()->id)
             ->with(['breakTimes', 'correctionRequests'])
@@ -78,7 +80,7 @@ class DetailController extends Controller
             ->with('status', '修正申請を送信しました。');
     }
 
-    public function storeCorrectionRequestByDate(AttendanceCorrectionRequest $request)
+    public function storeCorrectionRequestByDate(AttendanceCorrectionRequest $request): RedirectResponse
     {
         $workDate = Carbon::parse($request->input('work_date'))->toDateString();
         $validated = $request->validated();
