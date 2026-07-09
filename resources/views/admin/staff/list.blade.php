@@ -10,9 +10,9 @@
             <table class="data-table">
                 <thead>
                     <tr>
-                        <th class="px-4 py-3 text-left">名前</th>
-                        <th class="px-4 py-3 text-left">メールアドレス</th>
-                        <th class="px-4 py-3 text-left">月次勤怠</th>
+                        <th scope="col" class="px-4 py-3 text-left">名前</th>
+                        <th scope="col" class="px-4 py-3 text-left">メールアドレス</th>
+                        <th scope="col" class="px-4 py-3 text-left">月次勤怠</th>
                     </tr>
                 </thead>
                 <tbody>

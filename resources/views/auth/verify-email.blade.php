@@ -4,7 +4,7 @@
 
 @section('content')
     <div class="auth-page verify-email-page">
-        <div class="width-720">
+        <div class="verify-email-panel">
             <div class="text-center">
                 <p class="font-bold leading-8 text-[24px] text-black">
                     登録していただいたメールアドレスに認証メールを送付しました。<br>
