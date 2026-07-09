@@ -4,10 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\CorrectionRequest;
 use Illuminate\Http\Request;
+use Illuminate\View\View;
 
 class CorrectionRequestController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): View
     {
         $status = $request->query('status', 'pending');
 

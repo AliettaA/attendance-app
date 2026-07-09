@@ -11,8 +11,10 @@ use App\Services\Attendance\DetailViewService;
 use App\Services\Attendance\SummaryService;
 use Carbon\Carbon;
 use Carbon\CarbonPeriod;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class AttendanceController extends Controller
 {
@@ -21,11 +23,9 @@ class AttendanceController extends Controller
         private SummaryService $summaryService
     ) {}
 
-    public function index(Request $request)
+    public function index(Request $request): View
     {
-        $date = $request->query('date')
-            ? Carbon::parse($request->query('date'))
-            : Carbon::today();
+        $date = $this->parseDateOrToday($request->query('date'));
 
         $users = User::where('role', 'user')
             ->with(['attendances' => function ($query) use ($date) {
@@ -50,9 +50,9 @@ class AttendanceController extends Controller
         return view('admin.attendance.list', compact('date', 'attendanceRows', 'previousDate', 'nextDate'));
     }
 
-    public function show($id)
+    public function show($id): View
     {
-        $attendance = Attendance::with(['user', 'breakTimes', 'correctionRequests'])
+        $attendance = Attendance::with(['user', 'breakTimes', 'correctionRequests.correctionRequestBreaks'])
             ->findOrFail($id);
         $pendingCorrectionRequest = $attendance->correctionRequests
             ->where('status', 'pending')
@@ -62,10 +62,10 @@ class AttendanceController extends Controller
         return view('admin.attendance.detail', compact('attendance', 'pendingCorrectionRequest', 'breakInputRows'));
     }
 
-    public function createForStaffDate(Request $request, $id)
+    public function createForStaffDate(Request $request, $id): View|RedirectResponse
     {
         $user = User::where('role', 'user')->findOrFail($id);
-        $workDate = Carbon::parse($request->query('date', today()->toDateString()))->toDateString();
+        $workDate = $this->parseDateOrToday($request->query('date'))->toDateString();
         $existingAttendance = Attendance::where('user_id', $user->id)
             ->whereDate('work_date', $workDate)
             ->first();
@@ -88,12 +88,12 @@ class AttendanceController extends Controller
         return view('admin.attendance.detail', compact('attendance', 'pendingCorrectionRequest', 'breakInputRows'));
     }
 
-    public function update(AttendanceCorrectionRequest $request, $id)
+    public function update(AttendanceCorrectionRequest $request, $id): RedirectResponse
     {
-        $attendance = Attendance::with(['breakTimes', 'correctionRequests'])->findOrFail($id);
-        $hasPendingCorrectionRequest = $attendance->correctionRequests
+        $attendance = Attendance::findOrFail($id);
+        $hasPendingCorrectionRequest = $attendance->correctionRequests()
             ->where('status', 'pending')
-            ->isNotEmpty();
+            ->exists();
 
         if ($hasPendingCorrectionRequest) {
             return redirect()->route('admin.attendance.show', ['id' => $attendance->id]);
@@ -147,7 +147,7 @@ class AttendanceController extends Controller
             ->with('status', '勤怠情報を更新しました。');
     }
 
-    public function storeForStaffDate(AttendanceCorrectionRequest $request, $id)
+    public function storeForStaffDate(AttendanceCorrectionRequest $request, $id): RedirectResponse
     {
         $user = User::where('role', 'user')->findOrFail($id);
         $workDate = Carbon::parse($request->input('work_date'))->toDateString();
@@ -182,12 +182,10 @@ class AttendanceController extends Controller
             ->with('status', '勤怠情報を更新しました。');
     }
 
-    public function staff(Request $request, $id)
+    public function staff(Request $request, $id): View
     {
         $user = User::where('role', 'user')->findOrFail($id);
-        $month = $request->query('month')
-            ? Carbon::parse($request->query('month'))
-            : Carbon::today();
+        $month = $this->parseDateOrToday($request->query('month'));
 
         $startOfMonth = $month->copy()->startOfMonth();
         $endOfMonth = $month->copy()->endOfMonth();
@@ -221,9 +219,7 @@ class AttendanceController extends Controller
     public function exportStaffCsv(Request $request, $id)
     {
         $user = User::where('role', 'user')->findOrFail($id);
-        $month = $request->query('month')
-            ? Carbon::parse($request->query('month'))
-            : Carbon::today();
+        $month = $this->parseDateOrToday($request->query('month'));
 
         $attendances = Attendance::where('user_id', $user->id)
             ->whereBetween('work_date', [
@@ -270,5 +266,18 @@ class AttendanceController extends Controller
         }, $fileName, [
             'Content-Type' => 'text/csv; charset=UTF-8',
         ]);
+    }
+
+    private function parseDateOrToday(?string $value): Carbon
+    {
+        if (! $value) {
+            return Carbon::today();
+        }
+
+        try {
+            return Carbon::parse($value);
+        } catch (\Throwable) {
+            return Carbon::today();
+        }
     }
 }

@@ -205,7 +205,13 @@
     }
 
     .detail-note-value {
-        @apply items-start;
+        --detail-note-width: calc(120px + 72px + 7rem);
+        @apply relative items-start pb-8;
+    }
+
+    .detail-note-value .detail-error {
+        width: var(--detail-note-width);
+        @apply absolute bottom-2 left-10 max-w-full text-right;
     }
 
     .detail-input-row {
@@ -252,7 +258,7 @@
     }
 
     .detail-note-input {
-        width: calc(330px * 2);
+        width: var(--detail-note-width);
         @apply h-[72px] max-w-full rounded border px-3 py-2 font-bold text-black;
     }
 
