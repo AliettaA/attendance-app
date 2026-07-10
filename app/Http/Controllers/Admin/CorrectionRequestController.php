@@ -6,17 +6,19 @@ use App\Http\Controllers\Controller;
 use App\Models\BreakTime;
 use App\Models\CorrectionRequest;
 use Carbon\Carbon;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class CorrectionRequestController extends Controller
 {
-    public function show($id)
+    public function show($id): View
     {
         $correctionRequest = CorrectionRequest::with([
             'user',
-            'attendance.breakTimes',
-            'correctionRequestBreaks.originalBreakTime',
+            'attendance',
+            'correctionRequestBreaks',
         ])->findOrFail($id);
 
         $workDate = Carbon::parse($correctionRequest->attendance->work_date);
@@ -44,7 +46,7 @@ class CorrectionRequestController extends Controller
             'work_date' => $workDate->format('n月 j日'),
             'clock_in' => $this->formatTime($correctionRequest->requested_clock_in_at),
             'clock_out' => $this->formatTime($correctionRequest->requested_clock_out_at),
-            'break_rows' => $breakRows,
+            'break_rows' => $breakRows->all(),
             'note' => $correctionRequest->requested_note,
         ];
 
@@ -56,7 +58,7 @@ class CorrectionRequestController extends Controller
         return $time ? Carbon::parse($time)->format('H:i') : '';
     }
 
-    public function approve(Request $request, $id)
+    public function approve(Request $request, $id): RedirectResponse
     {
         $correctionRequest = CorrectionRequest::with(['attendance.breakTimes', 'correctionRequestBreaks'])
             ->where('status', 'pending')
