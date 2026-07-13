@@ -3,7 +3,7 @@
 @section('title', '勤怠一覧')
 
 @section('content')
-    <main class="page-container">
+    <main class="page-container attendance-list-page">
         <h1 class="page-title mb-8">勤怠一覧</h1>
 
         <div class="period-nav">

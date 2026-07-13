@@ -3,7 +3,7 @@
 @section('title', 'スタッフ別勤怠一覧')
 
 @section('content')
-    <main class="page-container">
+    <main class="page-container attendance-list-page">
         <h1 class="page-title">{{ $user->name }}さんの勤怠</h1>
 
         <div class="period-nav">

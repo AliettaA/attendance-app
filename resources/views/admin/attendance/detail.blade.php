@@ -101,7 +101,7 @@
 
             <div class="mt-8 text-right">
                 @if ($pendingCorrectionRequest)
-                    <p class="font-semibold text-red-600">※承認待ちのため修正はできません。</p>
+                    <p class="detail-pending-message">※承認待ちのため修正はできません。</p>
                 @else
                     <button type="submit" class="btn-action">
                         修正

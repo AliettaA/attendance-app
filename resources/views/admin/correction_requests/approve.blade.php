@@ -4,7 +4,7 @@
 
 @section('content')
     <main class="page-container">
-        <h1 class="page-title">修正申請承認</h1>
+        <h1 class="page-title">勤怠詳細</h1>
 
         <div class="detail-panel">
             <div class="detail-row">
@@ -22,7 +22,7 @@
 
             <div class="detail-row">
                 <div class="detail-label">出勤・退勤</div>
-                <div class="detail-input-row detail-time-row">
+                <div class="detail-input-row detail-approve-time-row">
                     <span>{{ $correctionRequestView['clock_in'] }}</span>
                     <span class="time-separator">〜</span>
                     <span>{{ $correctionRequestView['clock_out'] }}</span>
@@ -32,7 +32,7 @@
             @foreach ($correctionRequestView['break_rows'] as $index => $breakRow)
                 <div class="detail-row">
                     <div class="detail-label">休憩{{ $index + 1 }}</div>
-                    <div class="detail-input-row detail-time-row">
+                    <div class="detail-input-row detail-approve-time-row">
                         <span>{{ $breakRow['start'] }}</span>
                         <span class="time-separator">〜</span>
                         <span>{{ $breakRow['end'] }}</span>

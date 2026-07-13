@@ -9,26 +9,58 @@
 }
 
 @layer components {
+    /* =========================
+       共通レイアウト
+    ========================= */
+    .page-container {
+        @apply mx-auto px-6 py-10;
+        width: 900px;
+        max-width: 100%;
+    }
+
+    .page-title {
+        @apply mb-8 flex items-center gap-4 text-[30px] font-bold text-black;
+    }
+
+    .page-title::before {
+        content: '';
+        @apply block w-1.5 bg-black;
+        height: 34px;
+    }
+
+    .flash-message {
+        @apply fixed right-6 top-24 z-50 rounded bg-red-600 px-6 py-4 text-sm font-semibold text-white shadow-lg;
+    }
+
+    /* =========================
+       共通ボタン
+    ========================= */
+    .btn-action {
+        @apply inline-flex h-[50px] min-w-[130px] items-center justify-center rounded bg-black px-6 text-sm font-semibold text-white;
+    }
+
+    .btn-action-compact {
+        @apply inline-flex h-12 min-w-[120px] items-center justify-center rounded bg-black px-6 font-semibold text-white hover:bg-gray-800;
+    }
+
+    .btn-action-muted {
+        @apply inline-flex h-11 min-w-[110px] cursor-not-allowed items-center justify-center rounded bg-gray-400 px-6 text-sm font-semibold text-white;
+    }
+
+    .btn-secondary {
+        @apply rounded bg-gray-700 px-4 py-2 text-sm font-semibold text-white;
+    }
+
+    /* =========================
+       認証画面
+       login / register / email verify
+    ========================= */
     .auth-page {
         @apply flex min-h-[calc(100vh-72px)] items-start justify-center bg-white px-6 pt-24;
     }
 
-    .verify-email-page {
-        @apply items-center pt-0 pb-20;
-    }
-
-    .verify-email-panel {
-        @apply w-full max-w-[720px];
-    }
-
     .auth-panel {
         width: 680px;
-        max-width: 100%;
-    }
-
-    .page-container {
-        @apply mx-auto px-6 py-10;
-        width: 900px;
         max-width: 100%;
     }
 
@@ -44,17 +76,18 @@
         @apply mb-4 min-h-16;
     }
 
-    .verify-email-button {
-        @apply mx-auto mt-10 flex items-center justify-center rounded-lg font-semibold text-black;
-        width: 257px;
-        height: 69px;
-        font-size: 24px;
-        background-color: #D9D9D9;
-        border: 1.5px solid #000;
-    }
-
     .auth-form {
         @apply mt-10 flex flex-col gap-3;
+    }
+
+    .auth-submit {
+        width: 100%;
+        height: 60px;
+        @apply mt-10 rounded bg-black font-semibold text-white;
+    }
+
+    .auth-link {
+        @apply mt-6 block text-center text-[20px] text-blue-500 hover:text-blue-700;
     }
 
     .form-group {
@@ -75,76 +108,98 @@
         @apply mt-1 min-h-[20px] text-sm text-red-500;
     }
 
-    .flash-message {
-        @apply fixed right-6 top-24 z-50 rounded bg-red-600 px-6 py-4 text-sm font-semibold text-white shadow-lg;
+    .register-auth-page {
+        @apply pt-12;
     }
 
-    .auth-submit {
-        width: 100%;
-        height: 60px;
-        @apply mt-10 rounded bg-black font-semibold text-white;
+    .register-auth-page .auth-title {
+        @apply mb-4;
     }
 
-    .auth-link {
-        @apply mt-6 block text-center text-[20px] text-blue-600 hover:text-blue-800;
+    .register-auth-page .auth-form {
+        @apply mt-6 gap-1;
     }
 
+    .register-auth-page .form-error {
+        @apply min-h-[12px];
+    }
+
+    .register-auth-page .auth-submit {
+        @apply mt-6;
+        height: 55px;
+    }
+
+    .register-auth-page .auth-link {
+        @apply mt-4;
+    }
+
+    .verify-email-page {
+        @apply items-center pt-0 pb-20;
+    }
+
+    .verify-email-panel {
+        @apply w-full max-w-[720px];
+    }
+
+    .verify-email-button {
+        @apply mx-auto mt-10 flex items-center justify-center rounded-md font-bold text-black;
+        width: 145px;
+        height: 40px;
+        font-size: 14px;
+        background-color: #D9D9D9;
+        border: 1px solid #000;
+    }
+
+    /* =========================
+       勤怠登録画面
+       /attendance
+    ========================= */
     .attendance-register-page {
-        @apply flex min-h-[calc(100vh-72px)] items-start justify-center px-6 pt-40 text-center text-gray-800;
+        @apply flex min-h-[calc(100vh-72px)] items-start justify-center px-10 pt-36 text-center text-gray-800;
     }
 
     .attendance-register-panel {
         @apply mx-auto flex w-full max-w-xl flex-col items-center justify-center;
     }
 
+    .attendance-status-badge {
+        @apply mb-10 inline-flex h-8 w-[100px] items-center justify-center rounded-full bg-gray-300 text-[18px] font-semibold text-gray-600;
+    }
+
+    .attendance-current-date {
+        @apply mb-8 text-[40px] leading-none text-gray-700;
+    }
+
     .attendance-current-time {
-        @apply mb-20 text-[80px] font-bold tracking-normal text-gray-900;
+        @apply mb-14 text-[80px] font-bold leading-none tracking-normal text-gray-900;
+    }
+
+    .attendance-action-group {
+        @apply flex flex-wrap items-center justify-center gap-16;
     }
 
     .btn-primary {
-        @apply mx-8 rounded-2xl bg-black px-6 py-2 text-[32px] font-semibold text-white;
+        @apply inline-flex h-[75px] w-[220px] items-center justify-center rounded-[16px] bg-black text-[32px] font-bold text-white;
     }
 
     .btn-primary-white {
-        @apply mx-8 rounded-2xl bg-white px-6 py-2 text-[32px] font-semibold text-black;
+        @apply inline-flex h-[75px] w-[220px] items-center justify-center rounded-[16px] bg-white text-[32px] font-bold text-black;
     }
 
     .btn-primary:disabled {
         @apply bg-gray-400;
     }
 
-    .btn-action {
-        @apply inline-flex h-[50px] min-w-[130px] items-center justify-center rounded bg-black px-6 text-sm font-semibold text-white;
+    .attendance-finished-message {
+        @apply mt-5 text-[26px] font-semibold text-black;
     }
 
-    .btn-action-compact {
-        @apply inline-flex h-12 min-w-[120px] items-center justify-center rounded bg-black px-6 font-semibold text-white hover:bg-gray-800;
-    }
-
-    .btn-action-muted {
-        @apply inline-flex h-11 min-w-[110px] cursor-not-allowed items-center justify-center rounded bg-gray-400 px-6 text-sm font-semibold text-white;
-    }
-
-    .btn-secondary {
-        @apply rounded bg-gray-700 px-4 py-2 text-sm font-semibold text-white;
-    }
-
-    .detail-label {
-        @apply bg-white px-10 py-5 text-[16px] font-normal text-gray-500;
-    }
-
-    .page-title {
-        @apply flex items-center gap-4 text-[30px] font-bold text-black mb-8;
-    }
-
-    .page-title::before {
-        content: '';
-        @apply block w-1.5 bg-black;
-        height: 34px;
-    }
-
+    /* =========================
+       一覧系テーブル
+       attendance list / correction request / staff
+    ========================= */
     .table-panel {
-        @apply overflow-hidden bg-white rounded;
+        @apply overflow-hidden rounded bg-white;
     }
 
     .period-nav {
@@ -168,15 +223,59 @@
     }
 
     .data-table th {
-        @apply border-b-[3px] border-gray-200 px-4 py-3 text-[16px] text-left font-bold text-gray-500;
+        @apply border-b-[3px] border-gray-200 px-4 py-3 text-left text-[16px] font-bold text-gray-500;
     }
 
     .data-table td {
-        @apply border-b-2 border-gray-200 text-[16px] text-gray-500 px-4 py-3;
+        @apply border-b-2 border-gray-200 px-4 py-3 text-[16px] text-gray-500;
     }
 
     .data-table tbody tr:last-child td {
         @apply border-b-0;
+    }
+
+    .attendance-list-page .period-nav {
+        height: 60px;
+        @apply mb-6 py-0;
+    }
+
+    .attendance-list-page .data-table th,
+    .attendance-list-page .data-table td {
+        @apply py-2 text-[14px];
+    }
+
+    .correction-request-tabs {
+        @apply mb-6 flex border-b border-black;
+    }
+
+    .correction-request-tab {
+        @apply px-8 py-3 text-[16px] tracking-[0.15em];
+    }
+
+    .correction-request-list-page .data-table th,
+    .correction-request-list-page .data-table td {
+        @apply py-2 text-[14px];
+    }
+
+    .staff-list-page .data-table th,
+    .staff-list-page .data-table td {
+        @apply py-2 text-center text-[14px] tracking-normal;
+    }
+
+    /* =========================
+       レポート画面
+       /attendance/report
+    ========================= */
+    .report-card {
+        @apply rounded border-2 border-gray-200 bg-gray-50 px-4 py-2;
+    }
+
+    .report-card-label {
+        @apply text-[16px] font-semibold text-gray-500;
+    }
+
+    .report-card-value {
+        @apply mt-3 text-2xl font-bold text-gray-900;
     }
 
     .report-monthly-table th,
@@ -195,24 +294,16 @@
         @apply border-b-2;
     }
 
-    .report-card {
-        @apply rounded border-2 border-gray-200 bg-gray-50 px-4 py-2;
-    }
-
-    .report-card-label {
-        @apply text-[16px] font-semibold text-gray-500;
-    }
-
-    .report-card-value {
-        @apply mt-3 text-2xl font-bold text-gray-900;
-    }
-
+    /* =========================
+       勤怠詳細画面
+       detail / approve
+    ========================= */
     .detail-panel {
-        @apply overflow-hidden bg-white rounded;
+        @apply overflow-hidden rounded-[10px] bg-white;
     }
 
     .detail-row {
-        @apply grid border-b-[3px] border-gray-100 bg-white;
+        @apply grid border-b-2 border-gray-200 bg-white;
         grid-template-columns: 250px 1fr;
     }
 
@@ -220,30 +311,26 @@
         @apply border-b-0;
     }
 
+    .detail-label {
+        @apply bg-white px-10 py-5 text-[16px] font-normal text-gray-500;
+    }
+
     .detail-value {
-        @apply flex items-center px-10 py-3 text-[16px] font-bold text-black;
-    }
-
-    .detail-note-value {
-        --detail-note-width: calc(120px + 72px + 7rem);
-        @apply relative items-start pb-8;
-    }
-
-    .detail-note-value .detail-error {
-        width: var(--detail-note-width);
-        @apply absolute bottom-2 left-10 max-w-full text-right;
+        @apply flex items-center px-10 py-4 text-[16px] font-bold text-black;
     }
 
     .detail-input-row {
-        @apply flex flex-wrap items-center gap-4 px-10 py-3 text-[16px] font-bold text-black;
+        @apply flex flex-wrap items-center gap-4 px-10 py-4 text-[16px] font-bold text-black;
     }
 
+    /* 出勤・退勤、休憩の「時刻 〜 時刻」を3列で揃える */
     .detail-date-row,
-    .detail-time-row {
-        --detail-time-width: 120px;
-        --detail-separator-width: 72px;
+    .detail-time-row,
+    .detail-approve-time-row {
+        --detail-time-width: 100px;
+        --detail-separator-width: 100px;
         --detail-time-group-width: calc((var(--detail-time-width) * 2) + var(--detail-separator-width));
-        @apply grid items-center gap-0;
+        @apply grid items-center;
         grid-template-columns: var(--detail-time-width) var(--detail-separator-width) var(--detail-time-width);
     }
 
@@ -256,30 +343,10 @@
     }
 
     .detail-date-row > span,
+    .detail-approve-time-row > span:not(.time-separator),
     .detail-time-row > input,
     .detail-time-row > span:not(.time-separator) {
         @apply justify-self-start;
-    }
-
-    .detail-error {
-        @apply basis-full text-sm text-[14px] font-normal text-red-500;
-    }
-
-    .detail-time-row .detail-error {
-        grid-column: 1 / -1;
-    }
-
-    .detail-display-value {
-        @apply inline-flex min-h-[34px] items-center;
-    }
-
-    .detail-display-note {
-        @apply min-h-[60px] whitespace-pre-wrap py-2;
-    }
-
-    .detail-note-input {
-        width: var(--detail-note-width);
-        @apply h-[72px] max-w-full rounded border px-3 py-2 font-bold text-black;
     }
 
     .time-separator {
@@ -294,5 +361,40 @@
     .time-input::-webkit-calendar-picker-indicator {
         display: none;
         -webkit-appearance: none;
+    }
+
+    .detail-note-value {
+        --detail-note-width: calc(120px + 72px + 7rem);
+        @apply relative items-start pb-8;
+    }
+
+    .detail-note-value .detail-error {
+        width: var(--detail-note-width);
+        @apply absolute bottom-2 left-10 max-w-full text-right;
+    }
+
+    .detail-note-input {
+        width: var(--detail-note-width);
+        @apply h-[72px] max-w-full rounded border px-3 py-2 font-bold text-black;
+    }
+
+    .detail-error {
+        @apply basis-full text-sm text-[14px] font-normal text-red-500;
+    }
+
+    .detail-time-row .detail-error {
+        grid-column: 1 / -1;
+    }
+
+    .detail-pending-message {
+        @apply text-[18px] font-extrabold tracking-[0.15em] text-red-500/50;
+    }
+
+    .detail-display-value {
+        @apply inline-flex min-h-[34px] items-center;
+    }
+
+    .detail-display-note {
+        @apply min-h-[60px] whitespace-pre-wrap py-2;
     }
 }

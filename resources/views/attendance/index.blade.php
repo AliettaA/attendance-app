@@ -11,7 +11,7 @@
                 $today = now();
             @endphp
 
-            <p class="mb-10 inline-flex h-[40px] w-[140px] items-center justify-center rounded-full bg-gray-300 text-lg font-semibold text-gray-600 shadow">
+            <p class="attendance-status-badge">
                 @switch($status)
                     @case(null)
                         勤務外
@@ -31,7 +31,7 @@
                 @endswitch
             </p>
 
-            <p class="mb-8 text-[40px] text-gray-700">
+            <p class="attendance-current-date">
                 {{ $today->format('Y年m月d日') }}（{{ $weekdays[$today->dayOfWeek] }}）
             </p>
 
@@ -39,7 +39,7 @@
                 {{ $today->format('H:i') }}
             </p>
 
-            <div class="flex flex-wrap items-center justify-center gap-4">
+            <div class="attendance-action-group">
                 @switch($status)
                     @case(null)
                         <form method="POST" action="{{ route('attendance.clock_in') }}">
@@ -68,7 +68,7 @@
                     @break
 
                     @case('finished')
-                        <p class="text-lg font-semibold">お疲れ様でした。</p>
+                        <p class="attendance-finished-message">お疲れ様でした。</p>
                     @break
                 @endswitch
             </div>

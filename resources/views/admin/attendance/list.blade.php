@@ -3,7 +3,7 @@
 @section('title', '管理者 勤怠一覧')
 
 @section('content')
-    <main class="page-container">
+    <main class="page-container attendance-list-page">
         <h1 class="page-title">{{ $date->format('Y年n月j日') }}の勤怠</h1>
 
         <div class="period-nav">

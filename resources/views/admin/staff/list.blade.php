@@ -3,7 +3,7 @@
 @section('title', 'スタッフ一覧')
 
 @section('content')
-    <main class="page-container">
+    <main class="page-container staff-list-page">
         <h1 class="page-title mb-8">スタッフ一覧</h1>
 
         <div class="table-panel">

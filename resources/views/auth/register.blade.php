@@ -3,7 +3,7 @@
 @section('title', '会員登録')
 
 @section('content')
-    <div class="auth-page">
+    <div class="auth-page register-auth-page">
         <div class="auth-panel">
             <h1 class="auth-title">会員登録</h1>
 

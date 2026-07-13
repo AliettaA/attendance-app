@@ -3,16 +3,16 @@
 @section('title', '申請一覧')
 
 @section('content')
-    <div class="page-container">
+    <div class="page-container correction-request-list-page">
         <h1 class="page-title mb-8">申請一覧</h1>
 
-        <div class="mb-6 flex border-b border-black">
+        <div class="correction-request-tabs">
             <a href="{{ route('correction_requests.index', ['status' => 'pending']) }}"
-                class="px-8 py-3 text-[16px] {{ $status === 'pending' ? 'font-semibold  text-black' : 'text-gray-700' }}">
+                class="correction-request-tab {{ $status === 'pending' ? 'font-semibold text-black' : 'text-gray-700' }}">
                 承認待ち
             </a>
             <a href="{{ route('correction_requests.index', ['status' => 'approved']) }}"
-                class="px-8 py-3 text-[16px] {{ $status === 'approved' ? 'font-semibold text-black' : 'text-gray-700' }}">
+                class="correction-request-tab {{ $status === 'approved' ? 'font-semibold text-black' : 'text-gray-700' }}">
                 承認済み
             </a>
         </div>
