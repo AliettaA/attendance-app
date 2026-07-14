@@ -13,7 +13,8 @@
 
                 <div class="form-group">
                     <label for="email" class="form-label">メールアドレス</label>
-                    <input id="email" class="form-input" type="text" name="email" value="{{ old('email') }}" autofocus>
+                    <input id="email" class="form-input" type="text" name="email" value="{{ old('email') }}"
+                        autofocus>
                     <p class="form-error">
                         @error('email')
                             {{ $message }}

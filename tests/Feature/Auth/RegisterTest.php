@@ -63,7 +63,7 @@ class RegisterTest extends TestCase
         ]);
 
         $response->assertSessionHasErrors([
-            'password' => 'パスワードと一致しません',
+            'password_confirmation' => 'パスワードと一致しません',
         ]);
     }
 

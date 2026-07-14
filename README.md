@@ -49,7 +49,7 @@ docker run --rm \
 cp .env.example .env
 ```
 
-`.env` のデータベース設定は、Laravel Sail の MySQL コンテナに合わせて以下のように設定してください。
+`.env` ファイル作成後、データベース設定が Laravel Sail の MySQL コンテナに合わせて以下の内容になっていることを確認してください。
 
 ```env
 DB_CONNECTION=mysql
@@ -60,7 +60,7 @@ DB_USERNAME=sail
 DB_PASSWORD=password
 ```
 
-メール認証を MailHog で確認する場合は、以下の設定を使用します。
+メール認証を MailHog で確認する場合は、メール設定も以下のように変更してください。
 
 ```env
 MAIL_MAILER=smtp
@@ -166,6 +166,7 @@ MAIL_FROM_NAME="${APP_NAME}"
 ## API
 
 公開APIとして、勤怠レコードの取得・登録・更新・削除を提供しています。
+API上のリソース名は `attendance-records`、実際に保存されるテーブル名は `attendances` です。
 
 | メソッド | パス | 認証 | 説明 |
 | --- | --- | --- | --- |
@@ -222,9 +223,9 @@ CREATE DATABASE testing;
 
 ## ER図
 
-ER図は別途提出資料として作成しています。
-
 タイトル: 勤怠管理アプリ ER図（データベース設計）
+
+![ER図](docs/erd.png)
 
 ## テーブル設計
 

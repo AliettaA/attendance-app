@@ -6,25 +6,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-   public function up(): void
-{
-    Schema::create('correction_request_breaks', function (Blueprint $table) {
-        $table->id();
+    public function up(): void
+    {
+        Schema::create('correction_request_breaks', function (Blueprint $table) {
+            $table->id();
 
-        $table->foreignId('correction_request_id')
-            ->constrained()
-            ->cascadeOnDelete();
+            $table->foreignId('correction_request_id')
+                ->constrained()
+                ->cascadeOnDelete();
 
-        $table->foreignId('original_break_time_id')
-            ->nullable()
-            ->constrained('break_times')
-            ->nullOnDelete();
+            $table->foreignId('original_break_time_id')
+                ->nullable()
+                ->constrained('break_times')
+                ->nullOnDelete();
 
-        $table->dateTime('requested_break_start_at')->nullable();
-        $table->dateTime('requested_break_end_at')->nullable();
-        $table->timestamps();
-    });
-}
+            $table->dateTime('requested_break_start_at')->nullable();
+            $table->dateTime('requested_break_end_at')->nullable();
+            $table->timestamps();
+        });
+    }
+
     public function down(): void
     {
         Schema::dropIfExists('correction_request_breaks');

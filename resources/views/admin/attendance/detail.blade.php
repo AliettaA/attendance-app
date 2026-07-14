@@ -8,7 +8,8 @@
             <h1 class="page-title">勤怠詳細</h1>
         </div>
 
-        <form method="POST" action="{{ $attendance->exists ? route('admin.attendance.update', ['id' => $attendance->id]) : route('admin.attendance.staff.detail.store', ['id' => $attendance->user_id]) }}">
+        <form method="POST"
+            action="{{ $attendance->exists ? route('admin.attendance.update', ['id' => $attendance->id]) : route('admin.attendance.staff.detail.store', ['id' => $attendance->user_id]) }}">
             @csrf
             @unless ($attendance->exists)
                 <input type="hidden" name="work_date" value="{{ \Carbon\Carbon::parse($attendance->work_date)->toDateString() }}">
@@ -101,7 +102,7 @@
 
             <div class="mt-8 text-right">
                 @if ($pendingCorrectionRequest)
-                    <p class="detail-pending-message">※承認待ちのため修正はできません。</p>
+                    <p class="detail-pending-message">*承認待ちのため修正はできません。</p>
                 @else
                     <button type="submit" class="btn-action">
                         修正

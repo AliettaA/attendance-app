@@ -7,43 +7,26 @@ use App\Http\Requests\AttendanceCorrectionRequest;
 use App\Models\Attendance;
 use App\Models\BreakTime;
 use App\Models\User;
+use App\Services\Attendance\AdminAttendanceService;
 use App\Services\Attendance\DetailViewService;
-use App\Services\Attendance\SummaryService;
 use Carbon\Carbon;
-use Carbon\CarbonPeriod;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AttendanceController extends Controller
 {
     public function __construct(
         private DetailViewService $detailViewService,
-        private SummaryService $summaryService
+        private AdminAttendanceService $adminAttendanceService
     ) {}
 
     public function index(Request $request): View
     {
         $date = $this->parseDateOrToday($request->query('date'));
-
-        $users = User::where('role', 'user')
-            ->with(['attendances' => function ($query) use ($date) {
-                $query->whereDate('work_date', $date->toDateString())
-                    ->with('breakTimes');
-            }])
-            ->orderBy('name')
-            ->get();
-
-        $attendanceRows = $users->map(function (User $user) {
-            $attendance = $user->attendances->first();
-
-            return array_merge([
-                'name' => $user->name,
-                'detail_url' => $attendance ? route('admin.attendance.show', ['id' => $attendance->id]) : null,
-            ], $this->summaryService->attendanceSummary($attendance));
-        });
-
+        $attendanceRows = $this->adminAttendanceService->createDailyRows($date);
         $previousDate = $date->copy()->subDay()->toDateString();
         $nextDate = $date->copy()->addDay()->toDateString();
 
@@ -186,86 +169,19 @@ class AttendanceController extends Controller
     {
         $user = User::where('role', 'user')->findOrFail($id);
         $month = $this->parseDateOrToday($request->query('month'));
-
-        $startOfMonth = $month->copy()->startOfMonth();
-        $endOfMonth = $month->copy()->endOfMonth();
-
-        $attendances = Attendance::where('user_id', $user->id)
-            ->whereBetween('work_date', [$startOfMonth->toDateString(), $endOfMonth->toDateString()])
-            ->with('breakTimes')
-            ->orderBy('work_date')
-            ->get()
-            ->keyBy(fn (Attendance $attendance) => Carbon::parse($attendance->work_date)->toDateString());
-
-        $dates = collect(CarbonPeriod::create($startOfMonth, $endOfMonth));
-        $weekdays = ['日', '月', '火', '水', '木', '金', '土'];
-        $attendanceRows = $dates->map(function (Carbon $date) use ($attendances, $user, $weekdays) {
-            $attendance = $attendances->get($date->toDateString());
-
-            return array_merge([
-                'date' => $date->format('m/d').'（'.$weekdays[$date->dayOfWeek].'）',
-                'detail_url' => $attendance
-                    ? route('admin.attendance.show', ['id' => $attendance->id])
-                    : route('admin.attendance.staff.detail.create', ['id' => $user->id, 'date' => $date->toDateString()]),
-            ], $this->summaryService->attendanceSummary($attendance));
-        });
-
+        $attendanceRows = $this->adminAttendanceService->createStaffMonthlyRows($user, $month);
         $previousMonth = $month->copy()->subMonth()->format('Y-m');
         $nextMonth = $month->copy()->addMonth()->format('Y-m');
 
         return view('admin.attendance.staff', compact('user', 'month', 'attendanceRows', 'previousMonth', 'nextMonth'));
     }
 
-    public function exportStaffCsv(Request $request, $id)
+    public function exportStaffCsv(Request $request, $id): StreamedResponse
     {
         $user = User::where('role', 'user')->findOrFail($id);
         $month = $this->parseDateOrToday($request->query('month'));
 
-        $attendances = Attendance::where('user_id', $user->id)
-            ->whereBetween('work_date', [
-                $month->copy()->startOfMonth()->toDateString(),
-                $month->copy()->endOfMonth()->toDateString(),
-            ])
-            ->with('breakTimes')
-            ->orderBy('work_date')
-            ->get()
-            ->keyBy(fn (Attendance $attendance) => Carbon::parse($attendance->work_date)->toDateString());
-
-        $dates = collect(CarbonPeriod::create(
-            $month->copy()->startOfMonth(),
-            $month->copy()->endOfMonth()
-        ));
-
-        $fileName = 'attendance_'.$user->id.'_'.$month->format('Y_m').'.csv';
-
-        return response()->streamDownload(function () use ($dates, $attendances) {
-            $handle = fopen('php://output', 'w');
-            fputcsv($handle, ['日付', '出勤', '退勤', '休憩', '合計']);
-
-            foreach ($dates as $date) {
-                $attendance = $attendances->get($date->toDateString());
-
-                if (! $attendance) {
-                    fputcsv($handle, [$date->format('Y/m/d'), '', '', '', '']);
-
-                    continue;
-                }
-
-                $summary = $this->summaryService->attendanceSummary($attendance);
-
-                fputcsv($handle, [
-                    Carbon::parse($attendance->work_date)->format('Y/m/d'),
-                    $summary['clock_in'],
-                    $summary['clock_out'],
-                    $summary['break_time'],
-                    $summary['work_time'],
-                ]);
-            }
-
-            fclose($handle);
-        }, $fileName, [
-            'Content-Type' => 'text/csv; charset=UTF-8',
-        ]);
+        return $this->adminAttendanceService->streamStaffCsv($user, $month);
     }
 
     private function parseDateOrToday(?string $value): Carbon

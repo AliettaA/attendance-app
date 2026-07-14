@@ -15,9 +15,8 @@
                 $logoUrl = route('login');
 
                 if (auth()->check()) {
-                    $logoUrl = auth()->user()->role === 'admin'
-                        ? route('admin.attendance.index')
-                        : route('attendance.index');
+                    $logoUrl =
+                        auth()->user()->role === 'admin' ? route('admin.attendance.index') : route('attendance.index');
                 }
             @endphp
 

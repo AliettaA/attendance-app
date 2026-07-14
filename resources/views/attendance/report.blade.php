@@ -55,7 +55,8 @@
             <section>
                 <h2 class="mb-2 text-sm font-bold text-gray-900">今月の異常検知</h2>
                 <p class="mb-4 text-[14px] font-semibold text-gray-500">
-                    基準：開始時間{{ $report['standards']['start_time'] }} / 終業{{ $report['standards']['end_time'] }} / 長時間労働は1日{{ $report['standards']['long_work_time'] }}
+                    基準：開始時間{{ $report['standards']['start_time'] }} / 終業{{ $report['standards']['end_time'] }} /
+                    長時間労働は1日{{ $report['standards']['long_work_time'] }}
                 </p>
                 <div class="grid gap-4 md:grid-cols-3">
                     <div class="report-card">

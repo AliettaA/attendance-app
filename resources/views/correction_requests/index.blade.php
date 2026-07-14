@@ -33,7 +33,9 @@
                     @forelse ($correctionRequests as $correctionRequest)
                         @php
                             $detailUrl = auth()->user()->role === 'admin'
-                                ? route('admin.correction_requests.show', ['attendance_correct_request_id' => $correctionRequest->id])
+                                ? route('admin.correction_requests.show', [
+                                    'attendance_correct_request_id' => $correctionRequest->id,
+                                ])
                                 : route('attendance.detail.show', ['id' => $correctionRequest->attendance_id]);
                         @endphp
                         <tr class="text-sm">

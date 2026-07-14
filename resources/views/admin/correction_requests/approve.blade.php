@@ -49,7 +49,8 @@
 
         <div class="mt-8 text-right">
             @if ($correctionRequestView['status'] === 'pending')
-                <form method="POST" action="{{ route('admin.correction_requests.approve', ['attendance_correct_request_id' => $correctionRequestView['id']]) }}">
+                <form method="POST"
+                    action="{{ route('admin.correction_requests.approve', ['attendance_correct_request_id' => $correctionRequestView['id']]) }}">
                     @csrf
                     <button type="submit" class="btn-action">承認</button>
                 </form>

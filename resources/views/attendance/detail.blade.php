@@ -8,7 +8,8 @@
             <h1 class="page-title">勤怠詳細</h1>
         </div>
 
-        <form method="POST" action="{{ $attendance->exists ? route('attendance.detail.request', ['id' => $attendance->id]) : route('attendance.detail.store_by_date') }}">
+        <form method="POST"
+            action="{{ $attendance->exists ? route('attendance.detail.request', ['id' => $attendance->id]) : route('attendance.detail.store_by_date') }}">
             @csrf
             @unless ($attendance->exists)
                 <input type="hidden" name="work_date" value="{{ \Carbon\Carbon::parse($attendance->work_date)->toDateString() }}">
@@ -41,9 +42,13 @@
                     <div class="detail-label">出勤・退勤</div>
                     <div class="detail-input-row detail-time-row">
                         @if ($pendingCorrectionRequest)
-                            <span class="detail-display-value">{{ $displayClockInAt ? \Carbon\Carbon::parse($displayClockInAt)->format('H:i') : '' }}</span>
+                            <span class="detail-display-value">
+                                {{ $displayClockInAt ? \Carbon\Carbon::parse($displayClockInAt)->format('H:i') : '' }}
+                            </span>
                             <span class="time-separator">〜</span>
-                            <span class="detail-display-value">{{ $displayClockOutAt ? \Carbon\Carbon::parse($displayClockOutAt)->format('H:i') : '' }}</span>
+                            <span class="detail-display-value">
+                                {{ $displayClockOutAt ? \Carbon\Carbon::parse($displayClockOutAt)->format('H:i') : '' }}
+                            </span>
                         @else
                             <input type="time" name="clock_in_at"
                                 value="{{ old('clock_in_at', $displayClockInAt ? \Carbon\Carbon::parse($displayClockInAt)->format('H:i') : '') }}"
@@ -106,7 +111,9 @@
                     <div class="detail-label">備考</div>
                     <div class="detail-value detail-note-value">
                         @if ($pendingCorrectionRequest)
-                            <div class="detail-display-note">{{ $pendingCorrectionRequest?->requested_note ?? $attendance->note }}</div>
+                            <div class="detail-display-note">
+                                {{ $pendingCorrectionRequest?->requested_note ?? $attendance->note }}
+                            </div>
                         @else
                             <textarea name="note" rows="3" class="detail-note-input">{{ old('note', $attendance->note) }}</textarea>
                             <p class="detail-error">
@@ -121,7 +128,7 @@
 
             <div class="mt-8 text-right">
                 @if ($pendingCorrectionRequest)
-                    <p class="detail-pending-message">※承認待ちのため修正はできません。</p>
+                    <p class="detail-pending-message">*承認待ちのため修正はできません。</p>
                 @else
                     <button type="submit" class="btn-action">
                         修正

@@ -21,7 +21,7 @@ class AttendanceRecordPolicy
      */
     public function viewAny(User $user): bool
     {
-        //
+        return false;
     }
 
     /**
@@ -29,7 +29,7 @@ class AttendanceRecordPolicy
      */
     public function view(User $user, Attendance $attendance): bool
     {
-        //
+        return false;
     }
 
     /**
@@ -37,7 +37,7 @@ class AttendanceRecordPolicy
      */
     public function create(User $user): bool
     {
-        //
+        return false;
     }
 
     /**
@@ -61,7 +61,7 @@ class AttendanceRecordPolicy
      */
     public function restore(User $user, Attendance $attendance): bool
     {
-        //
+        return false;
     }
 
     /**
@@ -69,6 +69,6 @@ class AttendanceRecordPolicy
      */
     public function forceDelete(User $user, Attendance $attendance): bool
     {
-        //
+        return false;
     }
 }

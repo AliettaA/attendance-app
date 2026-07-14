@@ -7,12 +7,14 @@
         <h1 class="page-title">{{ $user->name }}さんの勤怠</h1>
 
         <div class="period-nav">
-            <a href="{{ route('admin.attendance.staff', ['id' => $user->id, 'month' => $previousMonth]) }}" class="period-nav-link">←前月</a>
+            <a href="{{ route('admin.attendance.staff', ['id' => $user->id, 'month' => $previousMonth]) }}"
+                class="period-nav-link">←前月</a>
             <p class="period-nav-title">
                 <x-icons.calendar class="h-6 w-6 text-gray-800" />
                 {{ $month->format('Y年m月') }}
             </p>
-            <a href="{{ route('admin.attendance.staff', ['id' => $user->id, 'month' => $nextMonth]) }}" class="period-nav-link">翌月→</a>
+            <a href="{{ route('admin.attendance.staff', ['id' => $user->id, 'month' => $nextMonth]) }}"
+                class="period-nav-link">翌月→</a>
         </div>
 
         <div class="table-panel">

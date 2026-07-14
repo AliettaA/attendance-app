@@ -23,7 +23,7 @@
     }
 
     .page-title::before {
-        content: '';
+        content: "";
         @apply block w-1.5 bg-black;
         height: 34px;
     }
@@ -146,7 +146,7 @@
         width: 145px;
         height: 40px;
         font-size: 14px;
-        background-color: #D9D9D9;
+        background-color: #d9d9d9;
         border: 1px solid #000;
     }
 
@@ -329,9 +329,13 @@
     .detail-approve-time-row {
         --detail-time-width: 100px;
         --detail-separator-width: 100px;
-        --detail-time-group-width: calc((var(--detail-time-width) * 2) + var(--detail-separator-width));
+        --detail-time-group-width: calc(
+            (var(--detail-time-width) * 2) + var(--detail-separator-width)
+        );
         @apply grid items-center;
-        grid-template-columns: var(--detail-time-width) var(--detail-separator-width) var(--detail-time-width);
+        grid-template-columns: var(--detail-time-width) var(
+                --detail-separator-width
+            ) var(--detail-time-width);
     }
 
     .detail-date-row > span:first-child {

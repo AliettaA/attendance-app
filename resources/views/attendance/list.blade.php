@@ -7,7 +7,8 @@
         <h1 class="page-title mb-8">勤怠一覧</h1>
 
         <div class="period-nav">
-            <a href="{{ route('attendance.list', ['month' => $previousMonth]) }}" class="period-nav-link" aria-label="前月の勤怠一覧を表示">
+            <a href="{{ route('attendance.list', ['month' => $previousMonth]) }}" class="period-nav-link"
+                aria-label="前月の勤怠一覧を表示">
                 ←前月
             </a>
 
