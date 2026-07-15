@@ -20,6 +20,12 @@ class AttendanceReportService
 
     public function __construct(private SummaryService $summaryService) {}
 
+    /**
+     * ログインユーザーの過去6ヶ月分の勤怠レポートを作成する。
+     *
+     * @param  User  $user  レポート対象のユーザー
+     * @return array{summary: array, monthly_reports: array, anomalies: array, standards: array}
+     */
     public function build(User $user): array
     {
         $currentMonth = Carbon::today()->startOfMonth();
@@ -59,15 +65,23 @@ class AttendanceReportService
         ];
     }
 
+    /**
+     * 対象期間の勤怠を月ごとの勤務日数・労働時間・残業時間に集計する。
+     *
+     * @param  Collection<int, Attendance>  $attendances  対象期間の勤怠コレクション
+     * @param  Carbon  $startMonth  集計開始月
+     * @param  Carbon  $currentMonth  集計終了月
+     * @return Collection<int, array<string, int|string>>
+     */
     private function buildMonthlyReports(Collection $attendances, Carbon $startMonth, Carbon $currentMonth): Collection
     {
-        $reports = collect();
         $period = CarbonPeriod::create($startMonth, '1 month', $currentMonth);
 
-        foreach ($period as $month) {
-            $monthAttendances = $attendances->filter(function (Attendance $attendance) use ($month) {
-                return Carbon::parse($attendance->work_date)->isSameMonth($month);
-            });
+        return collect($period)->map(function (Carbon $month) use ($attendances) {
+            $monthAttendances = $attendances
+                ->filter(function (Attendance $attendance) use ($month) {
+                    return Carbon::parse($attendance->work_date)->isSameMonth($month);
+                });
 
             $totalWorkMinutes = $monthAttendances->sum(fn (Attendance $attendance) => $this->summaryService->workMinutes($attendance));
             $totalOvertimeMinutes = $monthAttendances->sum(function (Attendance $attendance) {
@@ -75,18 +89,23 @@ class AttendanceReportService
             });
             $workDays = $monthAttendances->filter(fn (Attendance $attendance) => $this->summaryService->workMinutes($attendance) > 0)->count();
 
-            $reports->push([
+            return [
                 'month' => $month->format('Y年m月'),
                 'total_work_minutes' => $totalWorkMinutes,
                 'total_overtime_minutes' => $totalOvertimeMinutes,
                 'average_work_minutes' => $workDays > 0 ? intdiv($totalWorkMinutes, $workDays) : 0,
                 'work_days' => $workDays,
-            ]);
-        }
-
-        return $reports;
+            ];
+        });
     }
 
+    /**
+     * 当月の遅刻・早退・長時間労働の件数を集計する。
+     *
+     * @param  Collection<int, Attendance>  $attendances  対象期間の勤怠コレクション
+     * @param  Carbon  $currentMonth  異常検知の対象月
+     * @return array{late_count: int, early_leave_count: int, long_work_count: int}
+     */
     private function buildCurrentMonthAnomalies(Collection $attendances, Carbon $currentMonth): array
     {
         $currentMonthAttendances = $attendances->filter(function (Attendance $attendance) use ($currentMonth) {

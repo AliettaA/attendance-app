@@ -9,13 +9,19 @@ use App\Http\Requests\Api\V1\UpdateAttendanceRecordRequest;
 use App\Http\Resources\AttendanceRecordResource;
 use App\Models\Attendance;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
+use Illuminate\Http\Response;
 
 class AttendanceRecordController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * 勤怠一覧を検索条件とページネーション付きでJSON返却する。
+     *
+     * @param  IndexAttendanceRecordRequest  $request  一覧検索用のリクエスト
+     * @return AnonymousResourceCollection 勤怠一覧リソースのコレクション
      */
-    public function index(IndexAttendanceRecordRequest $request)
+    public function index(IndexAttendanceRecordRequest $request): AnonymousResourceCollection
     {
         $query = Attendance::with(['user', 'breakTimes'])
             ->when($request->filled('user_id'), function ($query) use ($request) {
@@ -41,7 +47,13 @@ class AttendanceRecordController extends Controller
         return AttendanceRecordResource::collection($attendanceRecords);
     }
 
-    public function store(StoreAttendanceRecordRequest $request)
+    /**
+     * API経由で新しい勤怠レコードを作成する。
+     *
+     * @param  StoreAttendanceRecordRequest  $request  勤怠登録用のリクエスト
+     * @return JsonResponse 作成した勤怠レコードのJSONレスポンス
+     */
+    public function store(StoreAttendanceRecordRequest $request): JsonResponse
     {
         $attendanceRecord = Attendance::create([
             'user_id' => $request->user()->id,
@@ -61,7 +73,13 @@ class AttendanceRecordController extends Controller
             ->setStatusCode(201);
     }
 
-    public function show(Attendance $attendanceRecord)
+    /**
+     * 指定された勤怠レコードの詳細をJSON返却する。
+     *
+     * @param  Attendance  $attendanceRecord  詳細取得対象の勤怠
+     * @return AttendanceRecordResource 勤怠詳細リソース
+     */
+    public function show(Attendance $attendanceRecord): AttendanceRecordResource
     {
         $attendanceRecord->load([
             'user',
@@ -73,9 +91,13 @@ class AttendanceRecordController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * API経由で指定された勤怠レコードを更新する。
+     *
+     * @param  UpdateAttendanceRecordRequest  $request  勤怠更新用のリクエスト
+     * @param  Attendance  $attendanceRecord  更新対象の勤怠
+     * @return AttendanceRecordResource 更新後の勤怠詳細リソース
      */
-    public function update(UpdateAttendanceRecordRequest $request, Attendance $attendanceRecord)
+    public function update(UpdateAttendanceRecordRequest $request, Attendance $attendanceRecord): AttendanceRecordResource
     {
         $this->authorize('update', $attendanceRecord);
         $attendanceRecord->update([
@@ -94,9 +116,12 @@ class AttendanceRecordController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * API経由で指定された勤怠レコードを削除する。
+     *
+     * @param  Attendance  $attendanceRecord  削除対象の勤怠
+     * @return Response 空レスポンス
      */
-    public function destroy(Attendance $attendanceRecord)
+    public function destroy(Attendance $attendanceRecord): Response
     {
         $this->authorize('delete', $attendanceRecord);
         $attendanceRecord->delete();

@@ -11,6 +11,12 @@ use Illuminate\Support\Facades\DB;
 
 class CorrectionService
 {
+    /**
+     * 指定した勤怠に未承認の修正申請が存在するか判定する。
+     *
+     * @param  Attendance  $attendance  判定対象の勤怠
+     * @return bool 未承認の修正申請がある場合は true
+     */
     public function hasPendingCorrectionRequest(Attendance $attendance): bool
     {
         return $attendance->correctionRequests()
@@ -18,6 +24,15 @@ class CorrectionService
             ->exists();
     }
 
+    /**
+     * 勤怠修正申請と申請用の休憩時間をトランザクション内で作成する。
+     *
+     * @param  Attendance  $attendance  修正対象の勤怠
+     * @param  User  $user  申請者
+     * @param  array  $validated  バリデーション済みの申請値
+     * @param  string  $workDate  勤務日
+     * @return CorrectionRequest 作成された修正申請
+     */
     public function createCorrectionRequest(Attendance $attendance, User $user, array $validated, string $workDate): CorrectionRequest
     {
         return DB::transaction(function () use ($attendance, $user, $validated, $workDate) {

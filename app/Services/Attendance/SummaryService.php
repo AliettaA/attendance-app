@@ -7,6 +7,12 @@ use Carbon\Carbon;
 
 class SummaryService
 {
+    /**
+     * 勤怠に紐づく休憩時間の合計分数を計算する。
+     *
+     * @param  Attendance|null  $attendance  集計対象の勤怠
+     * @return int 休憩時間の合計分数
+     */
     public function breakMinutes(?Attendance $attendance): int
     {
         if (! $attendance) {
@@ -23,6 +29,12 @@ class SummaryService
         });
     }
 
+    /**
+     * 出勤から退勤までの時間から休憩時間を引いた実働分数を計算する。
+     *
+     * @param  Attendance|null  $attendance  集計対象の勤怠
+     * @return int 実働時間の分数
+     */
     public function workMinutes(?Attendance $attendance): int
     {
         if (! $attendance || ! $attendance->clock_in_at || ! $attendance->clock_out_at) {
@@ -35,6 +47,13 @@ class SummaryService
         return max($workMinutes, 0);
     }
 
+    /**
+     * 分数を画面表示用の時間表記に変換する。
+     *
+     * @param  int  $minutes  変換対象の分数
+     * @param  string  $format  colon は H:MM、label は HhMMm 形式で返す
+     * @return string 整形済みの時間文字列
+     */
     public function formatMinutes(int $minutes, string $format = 'colon'): string
     {
         $hours = intdiv($minutes, 60);
@@ -47,6 +66,12 @@ class SummaryService
         return sprintf('%d:%02d', $hours, $remainingMinutes);
     }
 
+    /**
+     * 一覧表示で使用する出勤・退勤・休憩・実働時間の値を作成する。
+     *
+     * @param  Attendance|null  $attendance  表示対象の勤怠
+     * @return array{clock_in: string, clock_out: string, break_time: string, work_time: string}
+     */
     public function attendanceSummary(?Attendance $attendance): array
     {
         if (! $attendance) {

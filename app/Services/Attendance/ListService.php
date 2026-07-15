@@ -11,6 +11,13 @@ class ListService
 {
     public function __construct(private SummaryService $summaryService) {}
 
+    /**
+     * 一般ユーザーの月次勤怠一覧に表示する日別行データを作成する。
+     *
+     * @param  User  $user  表示対象のユーザー
+     * @param  Carbon  $month  表示対象月
+     * @return array<int, array<string, string|null>>
+     */
     public function createMonthlyRows(User $user, Carbon $month): array
     {
         $startOfMonth = $month->copy()->startOfMonth();

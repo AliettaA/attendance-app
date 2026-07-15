@@ -8,6 +8,13 @@ use Carbon\Carbon;
 
 class DetailViewService
 {
+    /**
+     * 勤怠詳細画面に表示する休憩入力行を作成する。
+     *
+     * @param  Attendance  $attendance  表示対象の勤怠
+     * @param  CorrectionRequest|null  $pendingCorrectionRequest  未承認の修正申請
+     * @return array<int, array<string, bool|int|string|null>>
+     */
     public function createBreakRows(Attendance $attendance, ?CorrectionRequest $pendingCorrectionRequest): array
     {
         $breakRows = $attendance->breakTimes->values();
@@ -33,6 +40,12 @@ class DetailViewService
             ->all();
     }
 
+    /**
+     * 日時値を時刻表示用の H:i 形式に変換する。
+     *
+     * @param  mixed  $value  変換対象の日時値
+     * @return string 時刻文字列。値がない場合は空文字
+     */
     private function formatTime($value): string
     {
         return $value ? Carbon::parse($value)->format('H:i') : '';

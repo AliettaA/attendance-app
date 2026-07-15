@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Attendance extends Model
 {
@@ -18,17 +20,17 @@ class Attendance extends Model
         'note',
     ];
 
-    public function user()
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    public function breakTimes()
+    public function breakTimes(): HasMany
     {
         return $this->hasMany(BreakTime::class);
     }
 
-    public function correctionRequests()
+    public function correctionRequests(): HasMany
     {
         return $this->hasMany(CorrectionRequest::class);
     }

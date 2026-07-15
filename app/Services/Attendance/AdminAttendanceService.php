@@ -13,6 +13,12 @@ class AdminAttendanceService
 {
     public function __construct(private SummaryService $summaryService) {}
 
+    /**
+     * 管理者の日次勤怠一覧に表示する全一般ユーザーの行データを作成する。
+     *
+     * @param  Carbon  $date  表示対象日
+     * @return Collection<int, array<string, string|null>>
+     */
     public function createDailyRows(Carbon $date): Collection
     {
         return User::where('role', 'user')
@@ -32,6 +38,13 @@ class AdminAttendanceService
             });
     }
 
+    /**
+     * 管理者のスタッフ別月次勤怠一覧に表示する日別行データを作成する。
+     *
+     * @param  User  $user  表示対象のスタッフ
+     * @param  Carbon  $month  表示対象月
+     * @return Collection<int, array<string, string|null>>
+     */
     public function createStaffMonthlyRows(User $user, Carbon $month): Collection
     {
         $attendances = $this->staffAttendances($user, $month);
@@ -53,6 +66,13 @@ class AdminAttendanceService
             });
     }
 
+    /**
+     * 指定スタッフの月次勤怠をCSVとしてダウンロードするレスポンスを作成する。
+     *
+     * @param  User  $user  CSV出力対象のスタッフ
+     * @param  Carbon  $month  CSV出力対象月
+     * @return StreamedResponse CSVダウンロードレスポンス
+     */
     public function streamStaffCsv(User $user, Carbon $month): StreamedResponse
     {
         $dates = $this->monthDates($month);
@@ -89,6 +109,13 @@ class AdminAttendanceService
         ]);
     }
 
+    /**
+     * 指定スタッフの対象月の勤怠を日付キーで取得する。
+     *
+     * @param  User  $user  取得対象のスタッフ
+     * @param  Carbon  $month  取得対象月
+     * @return Collection<string, Attendance>
+     */
     private function staffAttendances(User $user, Carbon $month): Collection
     {
         return Attendance::where('user_id', $user->id)
@@ -102,6 +129,12 @@ class AdminAttendanceService
             ->keyBy(fn (Attendance $attendance) => Carbon::parse($attendance->work_date)->toDateString());
     }
 
+    /**
+     * 指定月の月初から月末までの日付コレクションを作成する。
+     *
+     * @param  Carbon  $month  対象月
+     * @return Collection<int, Carbon>
+     */
     private function monthDates(Carbon $month): Collection
     {
         return collect(CarbonPeriod::create(
