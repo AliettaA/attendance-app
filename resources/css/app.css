@@ -324,33 +324,40 @@
     }
 
     /* 出勤・退勤、休憩の「時刻 〜 時刻」を3列で揃える */
-    .detail-date-row,
     .detail-time-row,
     .detail-approve-time-row {
-        --detail-time-width: 100px;
-        --detail-separator-width: 100px;
-        --detail-time-group-width: calc(
-            (var(--detail-time-width) * 2) + var(--detail-separator-width)
-        );
-        @apply grid items-center;
+        --detail-time-width: 140px;
+        --detail-separator-width: 50px;
+        @apply grid items-center gap-0;
         grid-template-columns: var(--detail-time-width) var(
                 --detail-separator-width
             ) var(--detail-time-width);
     }
 
-    .detail-date-row > span:first-child {
-        grid-column: 1;
+    .detail-approve-time-row {
+        --detail-time-width: 70px;
+        --detail-separator-width: 130px;
     }
 
-    .detail-date-row > span:last-child {
-        grid-column: 3;
-    }
-
-    .detail-date-row > span,
-    .detail-approve-time-row > span:not(.time-separator),
-    .detail-time-row > input,
-    .detail-time-row > span:not(.time-separator) {
+    .detail-approve-time-row .time-value-start {
         @apply justify-self-start;
+    }
+
+    .detail-date-row {
+        @apply gap-28;
+    }
+
+    .time-value-start {
+        @apply justify-self-end;
+    }
+
+    .time-value-end {
+        @apply justify-self-start;
+    }
+
+    .detail-time-row > input:not(.time-value-start):not(.time-value-end),
+    .detail-time-row > span:not(.time-separator):not(.time-value-start):not(.time-value-end) {
+        @apply justify-self-center;
     }
 
     .time-separator {
@@ -358,7 +365,7 @@
     }
 
     .time-input {
-        @apply h-8 w-28 rounded border px-3 py-1 font-bold text-black;
+        @apply h-8 w-28 rounded border px-3 py-1 text-center font-bold text-black;
         appearance: textfield;
     }
 
@@ -368,7 +375,7 @@
     }
 
     .detail-note-value {
-        --detail-note-width: calc(120px + 72px + 7rem);
+        --detail-note-width: calc(112px + 72px + 112px);
         @apply relative items-start pb-8;
     }
 

@@ -14,7 +14,7 @@
 
             <div class="detail-row">
                 <div class="detail-label">日付</div>
-                <div class="detail-input-row detail-date-row">
+                <div class="detail-value detail-date-row">
                     <span>{{ $correctionRequestView['work_year'] }}</span>
                     <span>{{ $correctionRequestView['work_date'] }}</span>
                 </div>
@@ -23,9 +23,9 @@
             <div class="detail-row">
                 <div class="detail-label">出勤・退勤</div>
                 <div class="detail-input-row detail-approve-time-row">
-                    <span>{{ $correctionRequestView['clock_in'] }}</span>
+                    <span class="time-value-start">{{ $correctionRequestView['clock_in'] }}</span>
                     <span class="time-separator">〜</span>
-                    <span>{{ $correctionRequestView['clock_out'] }}</span>
+                    <span class="time-value-end">{{ $correctionRequestView['clock_out'] }}</span>
                 </div>
             </div>
 
@@ -33,9 +33,9 @@
                 <div class="detail-row">
                     <div class="detail-label">休憩{{ $index + 1 }}</div>
                     <div class="detail-input-row detail-approve-time-row">
-                        <span>{{ $breakRow['start'] }}</span>
+                        <span class="time-value-start">{{ $breakRow['start'] }}</span>
                         <span class="time-separator">〜</span>
-                        <span>{{ $breakRow['end'] }}</span>
+                        <span class="time-value-end">{{ $breakRow['end'] }}</span>
                     </div>
                 </div>
             @endforeach

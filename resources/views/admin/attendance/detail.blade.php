@@ -27,7 +27,7 @@
 
                 <div class="detail-row">
                     <div class="detail-label">日付</div>
-                    <div class="detail-input-row detail-date-row">
+                    <div class="detail-value detail-date-row">
                         <span>{{ $workDate->format('Y年') }}</span>
                         <span>{{ $workDate->format('n月 j日') }}</span>
                     </div>
@@ -38,11 +38,11 @@
                     <div class="detail-input-row detail-time-row">
                         <input type="time" name="clock_in_at"
                             value="{{ old('clock_in_at', $attendance->clock_in_at ? \Carbon\Carbon::parse($attendance->clock_in_at)->format('H:i') : '') }}"
-                            class="time-input" @disabled($pendingCorrectionRequest)>
+                            class="time-input time-value-start" @disabled($pendingCorrectionRequest)>
                         <span class="time-separator">〜</span>
                         <input type="time" name="clock_out_at"
                             value="{{ old('clock_out_at', $attendance->clock_out_at ? \Carbon\Carbon::parse($attendance->clock_out_at)->format('H:i') : '') }}"
-                            class="time-input" @disabled($pendingCorrectionRequest)>
+                            class="time-input time-value-end" @disabled($pendingCorrectionRequest)>
                         <p class="detail-error">
                             @error('clock_in_at')
                                 {{ $message }}
@@ -64,11 +64,11 @@
                                 value="{{ old('breaks.' . $breakRow['index'] . '.original_break_time_id', $breakRow['original_break_time_id']) }}">
                             <input type="time" name="breaks[{{ $breakRow['index'] }}][start]"
                                 value="{{ old('breaks.' . $breakRow['index'] . '.start', $breakRow['start']) }}"
-                                class="time-input" @disabled($pendingCorrectionRequest)>
+                                class="time-input time-value-start" @disabled($pendingCorrectionRequest)>
                             <span class="time-separator">〜</span>
                             <input type="time" name="breaks[{{ $breakRow['index'] }}][end]"
                                 value="{{ old('breaks.' . $breakRow['index'] . '.end', $breakRow['end']) }}"
-                                class="time-input" @disabled($pendingCorrectionRequest)>
+                                class="time-input time-value-end" @disabled($pendingCorrectionRequest)>
                             <p class="detail-error">
                                 @error('breaks.' . $breakRow['index'] . '.start')
                                     {{ $message }}

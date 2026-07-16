@@ -27,7 +27,7 @@
 
                 <div class="detail-row">
                     <div class="detail-label">日付</div>
-                    <div class="detail-input-row detail-date-row">
+                    <div class="detail-value detail-date-row">
                         <span>{{ $workDate->format('Y年') }}</span>
                         <span>{{ $workDate->format('n月 j日') }}</span>
                     </div>
@@ -42,21 +42,21 @@
                     <div class="detail-label">出勤・退勤</div>
                     <div class="detail-input-row detail-time-row">
                         @if ($pendingCorrectionRequest)
-                            <span class="detail-display-value">
+                            <span class="detail-display-value time-value-start">
                                 {{ $displayClockInAt ? \Carbon\Carbon::parse($displayClockInAt)->format('H:i') : '' }}
                             </span>
                             <span class="time-separator">〜</span>
-                            <span class="detail-display-value">
+                            <span class="detail-display-value time-value-end">
                                 {{ $displayClockOutAt ? \Carbon\Carbon::parse($displayClockOutAt)->format('H:i') : '' }}
                             </span>
                         @else
                             <input type="time" name="clock_in_at"
                                 value="{{ old('clock_in_at', $displayClockInAt ? \Carbon\Carbon::parse($displayClockInAt)->format('H:i') : '') }}"
-                                class="time-input">
+                                class="time-input time-value-start">
                             <span class="time-separator">〜</span>
                             <input type="time" name="clock_out_at"
                                 value="{{ old('clock_out_at', $displayClockOutAt ? \Carbon\Carbon::parse($displayClockOutAt)->format('H:i') : '') }}"
-                                class="time-input">
+                                class="time-input time-value-end">
                             <p class="detail-error">
                                 @error('clock_in_at')
                                     {{ $message }}
@@ -76,19 +76,19 @@
                         </div>
                         <div class="detail-input-row detail-time-row">
                             @if ($pendingCorrectionRequest)
-                                <span class="detail-display-value">{{ $breakRow['start'] }}</span>
+                                <span class="detail-display-value time-value-start">{{ $breakRow['start'] }}</span>
                                 <span class="time-separator">〜</span>
-                                <span class="detail-display-value">{{ $breakRow['end'] }}</span>
+                                <span class="detail-display-value time-value-end">{{ $breakRow['end'] }}</span>
                             @else
                                 <input type="hidden" name="breaks[{{ $breakRow['index'] }}][original_break_time_id]"
                                     value="{{ old('breaks.' . $breakRow['index'] . '.original_break_time_id', $breakRow['original_break_time_id']) }}">
                                 <input type="time" name="breaks[{{ $breakRow['index'] }}][start]"
                                     value="{{ old('breaks.' . $breakRow['index'] . '.start', $breakRow['start']) }}"
-                                    class="time-input">
+                                    class="time-input time-value-start">
                                 <span class="time-separator">〜</span>
                                 <input type="time" name="breaks[{{ $breakRow['index'] }}][end]"
                                     value="{{ old('breaks.' . $breakRow['index'] . '.end', $breakRow['end']) }}"
-                                    class="time-input">
+                                    class="time-input time-value-end">
                                 <p class="detail-error">
                                     @error('breaks.' . $breakRow['index'] . '.start')
                                         {{ $message }}
