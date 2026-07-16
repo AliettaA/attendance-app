@@ -6,7 +6,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
-class StoreAttendanceRecordRequest extends FormRequest
+class  StoreAttendanceRecordRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -66,7 +66,6 @@ class StoreAttendanceRecordRequest extends FormRequest
             'clock_in.date_format' => '出勤時刻は HH:MM:SS 形式で指定してください。',
 
             'clock_out.date_format' => '退勤時刻は HH:MM:SS 形式で指定してください。',
-            'clock_out.after' => '退勤時刻は出勤時刻より後の時刻を指定してください。',
 
             'comment.max' => '備考は 255 文字以内で入力してください。',
         ];
