@@ -58,7 +58,7 @@ class AttendanceListTest extends TestCase
             ->get(route('attendance.list'));
 
         $response->assertOk();
-        $response->assertSee('2026年06月');
+        $response->assertSee('2026/06');
     }
 
     public function test_invalid_month_is_rejected(): void
@@ -97,7 +97,7 @@ class AttendanceListTest extends TestCase
             ->get(route('attendance.list', ['month' => '2026-05']));
 
         $response->assertOk();
-        $response->assertSee('2026年05月');
+        $response->assertSee('2026/05');
         $response->assertSee('05/10（日）');
         $response->assertSee('09:00');
         $response->assertSee('18:00');
@@ -124,7 +124,7 @@ class AttendanceListTest extends TestCase
             ->get(route('attendance.list', ['month' => '2026-07']));
 
         $response->assertOk();
-        $response->assertSee('2026年07月');
+        $response->assertSee('2026/07');
         $response->assertSee('07/10（金）');
         $response->assertSee('09:00');
         $response->assertSee('18:00');

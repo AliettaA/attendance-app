@@ -88,7 +88,7 @@ class AdminStaffTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('山田太郎さんの勤怠');
-        $response->assertSee('2026年06月');
+        $response->assertSee('2026/06');
         $response->assertSee('06/05（金）');
         $response->assertSee('09:00');
         $response->assertSee('18:00');
@@ -122,7 +122,7 @@ class AdminStaffTest extends TestCase
             ->get(route('admin.attendance.staff', ['id' => $user->id, 'month' => '2026-05']));
 
         $response->assertOk();
-        $response->assertSee('2026年05月');
+        $response->assertSee('2026/05');
         $response->assertSee('05/10（日）');
         $response->assertSee('09:30');
         $response->assertSee('18:30');
@@ -154,7 +154,7 @@ class AdminStaffTest extends TestCase
             ->get(route('admin.attendance.staff', ['id' => $user->id, 'month' => '2026-07']));
 
         $response->assertOk();
-        $response->assertSee('2026年07月');
+        $response->assertSee('2026/07');
         $response->assertSee('07/10（金）');
         $response->assertSee('08:45');
         $response->assertSee('17:45');

@@ -89,7 +89,7 @@ class AdminAttendanceListTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('2026年6月19日の勤怠');
-        $response->assertSee('2026年06月19日');
+        $response->assertSee('2026/06/19');
     }
 
     public function test_previous_day_records_are_shown(): void
@@ -119,7 +119,7 @@ class AdminAttendanceListTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('2026年6月18日の勤怠');
-        $response->assertSee('2026年06月18日');
+        $response->assertSee('2026/06/18');
         $response->assertSee('山田太郎');
         $response->assertSee('09:30');
         $response->assertSee('18:30');
@@ -152,7 +152,7 @@ class AdminAttendanceListTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('2026年6月20日の勤怠');
-        $response->assertSee('2026年06月20日');
+        $response->assertSee('2026/06/20');
         $response->assertSee('山田太郎');
         $response->assertSee('08:45');
         $response->assertSee('17:45');
