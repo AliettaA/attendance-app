@@ -11,7 +11,7 @@
                 class="period-nav-link">←前月</a>
             <p class="period-nav-title">
                 <x-icons.calendar class="h-6 w-6 text-gray-800" />
-                {{ $month->format('Y年m月') }}
+                {{ $month->format('Y/m') }}
             </p>
             <a href="{{ route('admin.attendance.staff', ['id' => $user->id, 'month' => $nextMonth]) }}"
                 class="period-nav-link">翌月→</a>

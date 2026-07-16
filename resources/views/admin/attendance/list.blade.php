@@ -11,7 +11,7 @@
 
             <p class="period-nav-title">
                 <x-icons.calendar class="h-6 w-6 text-gray-800" />
-                {{ $date->format('Y年m月d日') }}
+                {{ $date->format('Y/m/d') }}
             </p>
             <a href="{{ route('admin.attendance.index', ['date' => $nextDate]) }}" class="period-nav-link">翌日→</a>
         </div>

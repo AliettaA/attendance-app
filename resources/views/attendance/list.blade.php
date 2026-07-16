@@ -14,7 +14,7 @@
 
             <p class="period-nav-title">
                 <x-icons.calendar class="h-6 w-6 text-gray-600" />
-                {{ $month->format('Y年m月') }}
+                {{ $month->format('Y/m') }}
             </p>
 
             <a href="{{ route('attendance.list', ['month' => $nextMonth]) }}" class="period-nav-link" aria-label="翌月の勤怠一覧を表示">
