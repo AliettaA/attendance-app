@@ -17,6 +17,8 @@
 - Vite
 - Tailwind CSS
 
+Tailwind CSS はユーティリティクラスを基本にしつつ、共通レイアウト・ボタン・テーブル・詳細画面などの再利用スタイルは `resources/css/app.css` の `@layer components` にまとめています。
+
 ## 環境構築
 
 ### 1. リポジトリを取得
